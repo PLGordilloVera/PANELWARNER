@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentes Inmobiliarios del Mes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cinzel', serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #000000;
+            color: #ffcf2f;
+            text-align: center;
+            overflow-x: hidden; 
+            padding: 30px 0;
+            box-sizing: border-box;
+        }
+
+        /* Clase general para ocultar y luego mostrar con fade-in (3s) */
+        .fade-element {
+            opacity: 0;
+            transition: opacity 3s ease-in-out; 
+            width: 100%;
+        }
+        .fade-element.show {
+            opacity: 1;
+        }
+
+        /* Título principal */
+        #main-title {
+            font-size: 3em; 
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        /* Contenedor principal del Agente Actual */
+        #current-agent-display {
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            max-width: 700px; 
+            width: 90%;
+            transition: opacity 0.5s ease-in-out; 
+        }
+
+        #image-container {
+            max-width: 450px; /* IMAGEN MÁS GRANDE */
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+
+        #agent-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+        }
+        
+        #agent-name {
+            font-size: 3em;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
+            margin-bottom: 8px;
+        }
+
+        #agent-month {
+            font-size: 1.5em;
+            letter-spacing: 3px;
+            color: #FFD700;
+        }
+
+        /* Contenedor de Agentes Anteriores */
+        #history-section {
+            max-width: 850px; 
+            width: 90%;
+            padding: 10px 0;
+            margin-top: 20px; 
+        }
+
+        #history-buttons {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .month-button {
+            padding: 10px 18px;
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            background-color: transparent;
+            color: #FFD700;
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .month-button:hover,
+        .month-button.active { /* Clase active para destacar el mes actual o seleccionado */
+            background-color: #FFD700;
+            color: #000000;
+            box-shadow: 0 0 10px #FFD700;
+        }
+
+        /* Botón de Música */
+        #music-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #FFD700;
+            color: #000000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #music-button.show {
+            opacity: 1;
+        }
+        
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            #main-title { font-size: 2.5em; } 
+            #image-container { max-width: 260px; } 
+            #agent-name { font-size: 2.5em; }
+            #agent-month { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 id="main-title" class="fade-element">WARNER BIENES RAICES</h1>
+    
+    <div id="current-agent-display" class="fade-element">
+        <div id="image-container">
+            <img id="agent-image" src="alonso.png" alt="Agente Inmobiliario del Mes">
+        </div>
+        <div id="agent-name">ALONSO CASTAÑO</div>
+        <div id="agent-month">SEPTIEMBRE 2025</div>
+    </div>
+
+    <div id="history-section" class="fade-element">
+        <div id="history-buttons">
+            </div>
+    </div>
+
+    <button id="music-button" title="Iniciar Música">🎵</button>
+    
+    <audio id="background-music" src="MÚSICA DE PELÍCULAS_ GLADIADOR TEMA COMPLETO.mp4" loop preload="auto"></audio>
+
+    <script>
+        const agentsData = [
+            { month: 'SEPTIEMBRE 2025', name: 'ALONSO CASTAÑO', image: 'alonso.png', order: 9 },
+            { month: 'AGOSTO 2025', name: 'ALONSO CASTAÑO', image: 'alonso.png', order: 8 },
+            { month: 'JULIO 2025', name: 'MAURO BARRAZA', image: 'mauro.png', order: 7 },
+            { month: 'JUNIO 2025', name: 'MAURO BARRAZA', image: 'mauro.png', order: 6 },
+            { month: 'MAYO 2025', name: 'ANDREA VEDIA', image: 'andrea.png', order: 5 },
+            { month: 'ABRIL 2025', name: 'ANDREA VEDIA', image: 'andrea.png', order: 4 },
+            { month: 'MARZO 2025', name: 'MAURO BARRAZA', image: 'mauro.png', order: 3 },
+            { month: 'FEBRERO 2025', name: 'ANDREA VEDIA', image: 'andrea.png', order: 2 },
+            { month: 'ENERO 2025', name: 'MAURO BARRAZA', image: 'mauro.png', order: 1 },
+        ];
+
+        const currentAgentMonth = 'SEPTIEMBRE 2025';
+        
+        const mainTitle = document.getElementById('main-title');
+        const currentAgentDisplay = document.getElementById('current-agent-display');
+        const historySection = document.getElementById('history-section');
+        const musicButton = document.getElementById('music-button');
+        const backgroundMusic = document.getElementById('background-music');
+
+        const agentNameElement = document.getElementById('agent-name');
+        const agentImageElement = document.getElementById('agent-image');
+        const agentMonthElement = document.getElementById('agent-month');
+        const historyButtonsContainer = document.getElementById('history-buttons');
+        
+        let musicPlaying = false; 
+
+        
+        // Función para cambiar de agente (transición rápida) y actualizar el botón activo
+        function displayAgent(agent) {
+            currentAgentDisplay.style.opacity = '0';
+            
+            // Remueve la clase 'active' de todos los botones
+            document.querySelectorAll('.month-button').forEach(btn => btn.classList.remove('active'));
+
+            setTimeout(() => {
+                agentNameElement.textContent = agent.name;
+                agentImageElement.src = agent.image; 
+                agentImageElement.alt = `Agente del Mes: ${agent.name}`;
+                agentMonthElement.textContent = agent.month;
+                currentAgentDisplay.style.opacity = '1'; 
+                
+                // Añade la clase 'active' al botón del agente recién cargado
+                const activeBtn = Array.from(document.querySelectorAll('.month-button')).find(btn => btn.textContent === agent.month);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                }
+
+            }, 500); 
+        }
+
+        // Función principal para la secuencia de aparición
+        function startFadeSequence() {
+            const initialDelay = 1000; 
+            const transitionDuration = 3000; 
+            const gap = 500; 
+
+            // Título
+            setTimeout(() => { mainTitle.classList.add('show'); }, initialDelay);
+
+            // Agente del Mes
+            setTimeout(() => { 
+                currentAgentDisplay.classList.add('show'); 
+            }, initialDelay + transitionDuration + gap); 
+
+            // Sección de Historial
+            setTimeout(() => { 
+                historySection.classList.add('show'); 
+            }, initialDelay + (transitionDuration * 2) + (gap * 2)); 
+            
+            // Botón de música
+             setTimeout(() => { 
+                musicButton.classList.add('show'); 
+            }, initialDelay + (transitionDuration * 2) + (gap * 2) + 1500);
+        }
+
+        // Evento para el botón de música
+        musicButton.addEventListener('click', () => {
+            if (!musicPlaying) {
+                backgroundMusic.play().then(() => {
+                    musicPlaying = true;
+                    musicButton.textContent = '🔇'; 
+                    musicButton.title = 'Silenciar Música';
+                }).catch(error => {
+                    console.error("Error al intentar reproducir la música:", error);
+                });
+            } else {
+                backgroundMusic.pause();
+                musicPlaying = false;
+                musicButton.textContent = '🎵'; 
+                musicButton.title = 'Iniciar Música';
+            }
+        });
+
+
+        // Generar los botones de todos los meses (incluyendo Septiembre)
+        function generateHistoryButtons() {
+            // 1. Cargar el agente actual al inicio
+            const currentAgent = agentsData.find(a => a.month === currentAgentMonth);
+            agentNameElement.textContent = currentAgent.name;
+            agentImageElement.src = currentAgent.image; 
+            agentMonthElement.textContent = currentAgent.month;
+            
+            // 2. Ordenar TODOS los agentes cronológicamente (Enero a Septiembre)
+            let allAgentsOrdered = agentsData.sort((a, b) => a.order - b.order);
+
+            // 3. Crear los botones
+            allAgentsOrdered.forEach(agent => {
+                const button = document.createElement('button');
+                button.className = 'month-button';
+                button.textContent = agent.month;
+                
+                // Si es el mes actual, lo marcamos como activo al inicio
+                if (agent.month === currentAgentMonth) {
+                    button.classList.add('active');
+                }
+
+                button.addEventListener('click', () => {
+                    displayAgent(agent);
+                });
+                
+                historyButtonsContainer.appendChild(button);
+            });
+        }
+        
+        // Iniciar la configuración y la secuencia
+        generateHistoryButtons();
+        window.addEventListener('load', startFadeSequence);
+    </script>
+
+</body>
+</html>
