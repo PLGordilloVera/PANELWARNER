@@ -167,6 +167,11 @@
         #agente-del-mes-section .iframe-container iframe {
              --scale-factor: 1.0; 
         }
+        
+        /* APLICAMOS EL FACTOR DE ESCALA AL NUEVO IFRAME SI ES NECESARIO */
+        #rendimiento-section .iframe-container iframe {
+             --scale-factor: 1.0; /* Ajusta este valor si el contenido de rendimiento.html es demasiado grande o pequeño */
+        }
     </style>
 </head>
 
@@ -188,6 +193,10 @@
                     
                     <button data-target="database-section" class="nav-button active w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
                         📂 <span class="ml-3 whitespace-nowrap">Bases de Datos</span>
+                    </button>
+                    
+                    <button data-target="rendimiento-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
+                        📈 <span class="ml-3 whitespace-nowrap">Rendimiento Agentes</span>
                     </button>
                     
                     <button data-target="agente-del-mes-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
@@ -239,7 +248,7 @@
                     </a>
                     <a href="https://docs.google.com/spreadsheets/d/12Bi0Hn1FO0Fu5ZHT2c1BqVJKxD-ILEwo07TH0R15wEU/edit?resourcekey=&gid=46106711#gid=46106711" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                         PUBLICIDAD
-                    </a>                    
+                    </a>                    
                     <a href="https://docs.google.com/spreadsheets/d/1y1Ten0vMXceRXGzZELn63msgmtrluJltPnaBfIFWQdg/edit?gid=299938101#gid=299938101" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                         CARTELES
                     </a>
@@ -247,6 +256,19 @@
                         RESEÑAS
                     </a>
                     
+                </div>
+            </section>
+            
+            <section id="rendimiento-section" 
+                     class="section hidden iframe-section-style full-content-height">
+                
+                <div class="iframe-container"> 
+                    <iframe 
+                        src="rendimiento.html" 
+                        title="Rendimiento Agentes" 
+                        frameborder="0"
+                        allowfullscreen="" 
+                    ></iframe>
                 </div>
             </section>
 
