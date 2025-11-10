@@ -397,7 +397,7 @@ function drawGraph(agente, accion) {
     const xData = [];
     const yData = [];
     // Generar 9 meses: Ene(0) a Sep(8) del baseYear
-    for (let m = 0; m < 10; m++) {
+    for (let m = 0; m < 11; m++) {
         const monthStart = new Date(baseYear, m, 1);
         const monthKey = monthStart.toISOString().split('T')[0];
         xData.push(monthKey);
