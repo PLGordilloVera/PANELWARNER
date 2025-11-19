@@ -3,240 +3,310 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard Rendimiento Agentes WARNER</title>
+<title>Dashboard Rendimiento Agentes WARNER - MÁXIMO DETALLE Y COMPACTO</title>
 <base target="_top" />
 
-<!-- Fuentes: Share Tech Mono (General) y Orbitron (KPI Digital) -->
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap" rel="stylesheet" />
-<!-- Bootstrap 5.3 -->
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Orbitron:wght@600;800&family=Inter:wght@400&display=swap" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
 <style>
+/* ---------------------------------------------------- */
+/* === ESTILOS GENERALES Y PROPORCIONES (COMPACTO) === */
+/* ---------------------------------------------------- */
+:root {
+    /* PALETA ORIGINAL */
+    --color-bg-main: #0A192F; 
+    --color-text-main: #ccd6f6; 
+    --color-text-secondary: #8892b0; 
+    --color-accent-primary: #FFD700; /* DORADO */
+    --color-card-bg: rgba(17, 34, 64, 0.95); /* Opaco */
+    --color-border-line: #30415a; /* Borde de tarjeta más oscuro */
+    --spacing-unit: 18px; /* Unidad base más pequeña para compactar */
+    --radius-large: 8px; /* BORDES REDONDEADOS */
+}
 
-/* ====== Estilos principales ====== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0A192F !important; 
-    color: #ccd6f6 !important;
-    padding: 0;
-    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-bg-main) !important; 
+    color: var(--color-text-main) !important;
+    line-height: 1.5;
+    background-image: radial-gradient(circle at center, rgba(17, 34, 64, 0.2) 1px, transparent 0%);
+    background-size: 15px 15px;
 }
 
 .main-content-wrapper {
-    max-width: 1400px;
+    max-width: 1500px;
     margin: 0 auto;
-    padding: 10px 20px;
+    padding: var(--spacing-unit) 30px; 
 }
 
-/* ====== Título ====== */
-.military-title {
+/* ---------------------------------------------------- */
+/* === TÍTULO === */
+/* ---------------------------------------------------- */
+.cyber-title {
     text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 219, 16, 0.904);
-}
-
-.military-title h1 {
-    font-family: 'Share Tech Mono', monospace;
-    color: #FFD700;
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    font-weight: bold;
-    letter-spacing: 4px;
-    text-shadow: 0 0 10px rgba(255,215,0,0.8);
-}
-
-/* ====== Tarjetas Generales ====== */
-.card {
-    border: 1px solid rgba(255,255,255,0.5); 
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); 
-    background-color: rgba(17, 34, 64, 0.7);
-    backdrop-filter: blur(2px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); 
-}
-
-/* ====== CONTROLES ====== */
-.control-card { 
-    padding: 8px 10px; 
-}
-
-.form-label {
-    text-align: center;
-    display: block; 
-    color: #FFFFFF;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.75rem; 
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
-
-.form-select {
-    border-radius: 6px;
-    background-color: #112240;
-    color: #ccd6f6;
-    border: 1px solid #334455;
-    appearance: none;
-    font-size: 0.85rem; 
-    padding: 0.25rem 2rem 0.25rem 0.5rem; 
-}
-
-.form-select:focus {
-    background-color: #1b2b4a;
-    color: #fff;
-    border-color: #FFD700;
-    box-shadow: none;
-}
-
-/* ====== KPI Cards (REDONDOS PEQUEÑOS) ====== */
-#kpi-container { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 30px; 
-}
-
-.kpi-wrapper {
-    display: flex;
-    justify-content: center;
-}
-
-.kpi-card {
-    width: 140px;   
-    height: 140px;  
-    border-radius: 50%;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    
-    background-color: #081223; 
-    border: 2px solid #FFFFFF; 
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0,0,0,0.8);
-    transition: all 0.3s ease;
+    margin-bottom: var(--spacing-unit); 
+    padding: 15px 0;
     position: relative;
-    overflow: hidden;
-    padding: 5px;
+    border-bottom: 2px solid var(--color-border-line); 
+    border-top: 2px solid var(--color-border-line);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
 }
 
-.kpi-card:hover {
-    background-color: #0b1a33;
-    transform: scale(1.1);
-    border-color: #FFD700; 
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); 
+.cyber-title h1 {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--color-text-main);
+    font-size: clamp(2.2rem, 5vw, 3.8rem); 
+    font-weight: 700;
+    letter-spacing: 10px; 
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.6); 
 }
 
-.kpi-card::before {
+.cyber-title::before, .cyber-title::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-    pointer-events: none;
+    width: 20px; height: 20px;
+    border: 3px solid var(--color-accent-primary);
+    opacity: 0.8;
+}
+.cyber-title::before { 
+    top: 0; left: 0; 
+    border-right: none; 
+    border-bottom: none; 
+}
+.cyber-title::after { 
+    top: 0; right: 0; 
+    border-left: none; 
+    border-bottom: none; 
 }
 
-.kpi-title {
-    font-size: 0.65rem; 
-    color: #8892b0;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-    max-width: 95%;
-    line-height: 1;
-    z-index: 2;
+
+/* ---------------------------------------------------- */
+/* === CONTROLES Y TARJETAS (BORDES REDONDEADOS) === */
+/* ---------------------------------------------------- */
+.card {
+    border: 2px solid var(--color-border-line); 
+    border-radius: var(--radius-large); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    background-color: var(--color-card-bg);
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.kpi-value {
-    font-family: 'Orbitron', sans-serif; 
-    font-size: 1.6rem; 
+.control-card { 
+    padding: 18px 22px; 
+}
+
+/* ---------------------------------------------------- */
+/* === KPI Cards (BORDES REDONDEADOS) === */
+/* ---------------------------------------------------- */
+.kpi-card-rect {
+    padding: 20px 25px; 
+    background-color: #081223;
+    border: 1px solid var(--color-border-line);
+    border-radius: var(--radius-large); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.05); 
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card-rect:hover {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
+    transform: translateY(-2px);
+}
+
+.kpi-card-rect::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-primary) 10%, transparent 90%);
+    opacity: 0.7;
+    border-top-left-radius: var(--radius-large);
+    border-top-right-radius: var(--radius-large);
+}
+
+.kpi-title-rect {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem; 
+    color: var(--color-text-secondary);
     font-weight: 700;
-    color: #FFD700;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    z-index: 2;
-    letter-spacing: 1px;
-    margin-top: 2px;
+    letter-spacing: 1.5px;
+    margin-bottom: 3px;
+    text-transform: uppercase;
 }
 
-/* ====== Chart area y Toggle ====== */
+.kpi-subtitle-rect {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; 
+    color: var(--color-border-line);
+    margin-bottom: 10px; 
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(136, 146, 176, 0.15); 
+}
+
+.kpi-value-rect {
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 3rem; 
+    font-weight: 800;
+    color: var(--color-accent-primary);
+    text-shadow: 0 0 18px rgba(255, 215, 0, 0.8); 
+    letter-spacing: 3px;
+    display: block; 
+}
+
+/* ---------------------------------------------------- */
+/* === CHART AREA (TOTALMENTE TRANSPARENTE) === */
+/* ---------------------------------------------------- */
+
+/* Hacemos que la tarjeta contenedora del gráfico sea invisible */
+#chart-card-container {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 40px !important; 
+}
+
 .chart-card-content {
     position: relative;
-    padding: 10px;
+    padding: 0; /* Eliminamos el padding para que el gráfico ocupe más espacio */
 }
 
+/* ELIMINAMOS EL BORDE Y SOMBRA DEL GRAFICO INTERNO */
 #plotly-graph {
     width: 100%;
-    height: 80vh; 
-    min-height: 500px;
+    height: 60vh; 
+    min-height: 450px;
+    border: none !important; /* BORDE ELIMINADO */
+    box-shadow: none !important; /* SOMBRA ELIMINADA */
+    border-radius: 0 !important; /* BORDE REDONDEADO ELIMINADO */
 }
 
 .toggle-container {
-    position: absolute;
-    top: 10px;
+    position: absolute; 
+    /* Ajustado para flotar sobre el área del gráfico */
+    top: 10px; 
     right: 10px;
     z-index: 50;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    background-color: rgba(17, 34, 64, 0.9);
+    gap: 10px; 
+    padding: 6px 12px;
+    background-color: #0b1a33;
+    border: 2px solid var(--color-accent-primary); 
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     border-radius: 4px;
 }
 
+/* Línea de estado del terminal */
+#status-line {
+    border-bottom: none !important; /* LÍNEA PUNTEADA ELIMINADA */
+    padding-bottom: 10px;
+    margin-top: 5px;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+/* Resto de estilos de formulario y switch (sin cambios) */
 .toggle-label {
-    font-size: 0.7rem;
-    color: #FFD700;
-    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
 }
 
-.switch { position: relative; width: 40px; height: 20px; } 
-.switch input { display: none; }
+.switch { position: relative; display: inline-block; width: 50px; height: 26px; } 
+.switch input { opacity: 0; width: 0; height: 0; }
+
 .slider {
-    position: absolute; cursor: pointer; inset: 0;
-    background-color: #555; border-radius: 30px;
-    border: 1px solid #FFD700; transition: .3s;
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
+    background-color: #112240; 
+    border: 2px solid var(--color-accent-primary); 
+    transition: .4s;
+    border-radius: 34px;
 }
-.slider:before {
-    content: ""; position: absolute; height: 14px; width: 14px;
-    background-color: #FFD700; left: 2px; bottom: 2px;
-    border-radius: 50%; transition: 0.3s;
-}
-input:checked + .slider { background-color: #1b2b4a; }
-input:checked + .slider:before { transform: translateX(20px); }
 
+.slider:before {
+    position: absolute; content: "";
+    height: 16px; width: 16px; left: 4px; bottom: 4px; 
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { 
+    background-color: #081223; 
+    border-color: #ccd6f6; 
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px); 
+}
+
+.form-label {
+    color: var(--color-accent-primary);
+    font-size: 0.95rem; 
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.form-select {
+    border-radius: 3px;
+    background-color: #05142a; 
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border-line);
+    font-size: 1rem; 
+}
+
+.form-select:focus {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 0.15rem rgba(255, 215, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* ---------------------------------------------------- */
+/* === AJUSTES RESPONSIVOS (PARA MÓVILES) === */
+/* ---------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Optimizar el padding general en pantallas pequeñas */
+    .main-content-wrapper {
+        padding: var(--spacing-unit) 15px; /* Reducir el padding lateral */
+    }
+
+    /* Reducir el tamaño del valor KPI para que quepa mejor */
+    .kpi-value-rect {
+        font-size: 2.5rem; /* De 3rem a 2.5rem */
+    }
+
+    /* Reducir el espaciado entre letras del título principal para que quepa mejor en ancho */
+    .cyber-title h1 {
+        letter-spacing: 5px; 
+    }
+}
 </style>
 </head>
 
 <body>
 <div class="main-content-wrapper">
 
-    <header class="military-title">
+    <header class="cyber-title">
         <h1>DASHBOARD DE RENDIMIENTO WARNER</h1>
     </header>
 
-    <!-- CONTROLES -->
-    <div class="row g-3 mb-4 justify-content-center align-items-center">
+    <div class="row g-3 mb-3 justify-content-center">
 
-        <div class="col-5 col-md-3">
+        <div class="col-12 col-md-5 col-lg-4">
             <div class="card control-card">
-                <label for="agente-select" class="form-label">AGENTE</label>
+                <label for="agente-select" class="form-label">UNIDAD DE ANÁLISIS (AGENTE)</label>
                 <select id="agente-select" class="form-select">
                     <option value="">Cargando...</option>
                 </select>
             </div>
         </div>
 
-        <div class="col-5 col-md-3">
+        <div class="col-12 col-md-5 col-lg-4">
             <div class="card control-card">
-                <label for="accion-select" class="form-label">ACCIÓN</label>
+                <label for="accion-select" class="form-label">MÉTRICA DE SEGUIMIENTO</label>
                 <select id="accion-select" class="form-select">
                     <option value="CAPTACIONES">CAPTACIONES</option>
                     <option value="VALUACIONES">VALUACIONES</option>
@@ -251,40 +321,38 @@ input:checked + .slider:before { transform: translateX(20px); }
 
     </div>
 
-    <!-- GRAFICO -->
-    <div class="card mb-4"> 
+    <div id="kpi-container" class="row mb-3 g-3"> 
+    </div>
+
+    <div id="chart-card-container" class="card mb-5"> 
         <div class="chart-card-content">
 
             <div class="toggle-container">
-                <span class="toggle-label">MENSUAL</span>
+                <span class="toggle-label" style="color:var(--color-text-secondary);">MENSUAL</span>
 
                 <label class="switch">
                     <input type="checkbox" id="mini-toggle-view">
                     <span class="slider"></span>
                 </label>
 
-                <span class="toggle-label">DIARIO</span>
+                <span class="toggle-label" style="color:var(--color-accent-primary);">DIARIO</span>
             </div>
 
-            <div id="status-line" class="text-center mb-2" style="color:#FFD700; font-size: 0.8rem;">Cargando datos...</div>
+            <div id="status-line" class="text-center" style="color:var(--color-accent-primary); font-family: 'Rajdhani', sans-serif;">// INICIALIZANDO INTERFAZ Y REQUIRIENDO DATOS...</div>
             <div id="plotly-graph"></div>
         </div>
     </div>
 
-    <!-- KPIs -->
-    <div id="kpi-container" class="row mb-3"></div>
 
-    <footer class="footer-text mt-3 text-center" style="color:#8892b0; font-size: 0.8rem;">
-        Dashboard actualizado automáticamente mediante Google Sheets + Apps Script.
+    <footer class="footer-text mt-4 text-center" style="color:var(--color-text-secondary); font-size: 0.8rem; font-family: 'Rajdhani', sans-serif;">
+        [SYSTEM STATUS OK] :: DATALINK STABLE. :: OPERATION WARNER V8.2 ONLINE.
     </footer>
 
 </div>
 
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-
 <script>
 /* =================================================================================
-   LÓGICA DEL DASHBOARD
+   LÓGICA DEL DASHBOARD (SIN CAMBIOS FUNCIONALES)
    ================================================================================= */
 
 // Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
@@ -332,11 +400,10 @@ function aggregateSum(items, keyExtractor) {
 
 /* --- Cargar datos --- */
 async function cargarDatos() {
-    STATUS_LINE.innerText = "Conectando con la base de datos...";
+    STATUS_LINE.innerText = "// CONECTANDO A BASE DE DATOS E INICIANDO STREAM...";
     try {
         const r = await fetch(API_URL);
         
-        // Manejo de errores HTTP
         if (!r.ok) {
             console.error("Error al obtener datos del API. Código HTTP:", r.status, r.statusText);
             throw new Error(`Error en el API (HTTP ${r.status}).`);
@@ -352,25 +419,23 @@ async function cargarDatos() {
         
         AGENTE_SELECT.innerHTML = AGENTES.map(a => `<option value="${a}">${a}</option>`).join("");
         
-        STATUS_LINE.innerText = ""; 
+        STATUS_LINE.innerText = "// STREAM ESTABLECIDO. DATOS OK."; 
         
         renderKPIs();
         renderChart();
     } catch (e) {
-        // Mejor manejo de errores y mensaje para el usuario
         console.error("Error al cargar datos. Verifique la URL y permisos:", e);
-        let errorMsg = `Error de conexión. Verifique la URL y permisos del API. (Detalles en la consola)`;
+        let errorMsg = `// ERROR CRÍTICO DE CONEXIÓN. REVISAR API_URL.`;
         if (e.message && e.message.includes('Failed to fetch')) {
-             errorMsg = `Error de Red. Verifique que la URL de API_URL sea accesible (Falla al buscar).`;
+             errorMsg = `// ERROR DE RED: API NO ACCESIBLE.`;
         } else if (e.message) {
-            errorMsg = `Error en el API: ${e.message}.`;
+            errorMsg = `// ERROR DEL API: ${e.message}.`;
         }
         STATUS_LINE.innerText = errorMsg;
     }
 }
 
-/* --- Lógica de obtención de series --- */
-
+/* --- Lógica de obtención de series (Mantenida) --- */
 function getDailyRecordsOnly(agente, accion) {
     return DATA.filter(i =>
         filterForAgentAndAction(i, agente, accion) &&
@@ -423,21 +488,21 @@ function getDailySeries(agente, accion) {
     });
 }
 
+
 /* --- Renderizado --- */
 
 function renderChart() {
-    STATUS_LINE.innerText = "Cargando gráfico...";
+    STATUS_LINE.innerText = "// RENDERIZANDO GRÁFICO DE EVOLUCIÓN...";
     
     const serie = vistaActual === "mensual"
-                  ? getMonthlySeries(agenteActual, accionActual)
-                  : getDailySeries(agenteActual, accionActual);
+                      ? getMonthlySeries(agenteActual, accionActual)
+                      : getDailySeries(agenteActual, accionActual);
 
     const x = serie.map(s => s.x);
     const y = serie.map(s => s.y);
     
     const isMonthly = vistaActual === "mensual";
     
-    // Formato Eje X (Sin Año)
     let customTickText = [];
     if (isMonthly) {
         customTickText = x.map(dateStr => {
@@ -448,7 +513,7 @@ function renderChart() {
     } else {
         customTickText = x.map(dateStr => {
             const parts = dateStr.split('-');
-            return parts[2]; // Solo día
+            return parts[2]; 
         });
     }
 
@@ -457,56 +522,88 @@ function renderChart() {
             x, y, 
             type: "bar",
             name: "Conteo",
-            marker: { color: "rgba(255, 255, 255, 0.9)" } 
+            marker: { 
+                color: "rgba(255, 215, 0, 0.7)", 
+                line: {
+                    color: "rgba(255, 215, 0, 1)",
+                    width: 1
+                }
+            } 
         },
         {
             x, y, 
             type: "scatter", 
             mode: "lines+markers", 
             name: "Tendencia",
-            line: { color: "#FFD700", width: 4 }, 
-            marker: { color: "#FFD700", size: 6 }
+            line: { color: "#ccd6f6", width: 3 }, 
+            marker: { 
+                color: "#0A192F", 
+                size: 10, 
+                line: {
+                    color: "#FFD700", 
+                    width: 2
+                }
+            }
         }
     ];
 
     const layout = {
+        title: {
+            text: `EVOLUCIÓN DE ${accionActual} [UNIDAD: ${agenteActual}]`,
+            font: {
+                color: '#ccd6f6',
+                family: 'Rajdhani, sans-serif',
+                size: 20
+            },
+            y: 0.95,
+            x: 0.02,
+            xref: 'paper',
+            xanchor: 'auto'
+        },
         xaxis: {
             tickangle: 0, 
-            color: "#fff",
+            color: "#8892b0", 
             tickmode: 'array',
             tickvals: x,
             ticktext: customTickText,
-            gridcolor: "rgba(255,255,255,0.1)",
+            gridcolor: "rgba(136, 146, 176, 0.15)", 
             linecolor: "#8892b0",
             zerolinecolor: "#8892b0",
         },
         yaxis: {
-            color: "#fff",
-            gridcolor: "rgba(255,255,255,0.1)",
+            color: "#8892b0", 
+            gridcolor: "rgba(136, 146, 176, 0.15)",
             linecolor: "#8892b0",
             zerolinecolor: "#8892b0",
-            // CONFIGURACIÓN PARA EL TOPE DE 10 EN VISTA DIARIA
-            range: isMonthly ? null : [0, 10], 
-            dtick: isMonthly ? null : 1 // Pasos de a 1 en diario
+            range: isMonthly ? null : [0, 5], 
+            dtick: isMonthly ? null : 1 
         },
-        plot_bgcolor: "rgba(10,25,47,0.7)",
+        // PROPIEDADES CLAVE PARA LA TRANSPARENCIA TOTAL
+        plot_bgcolor: "transparent", 
         paper_bgcolor: "transparent",
-        margin: { t: 20, b: 40, l: 40, r: 20 }, 
+        // FIN PROPIEDADES CLAVE
+        margin: { t: 50, b: 50, l: 50, r: 20 }, 
         showlegend: false
     };
 
     Plotly.newPlot(PLOTLY_GRAPH_ID, data, layout, { responsive: true, displayModeBar: false });
     
-    STATUS_LINE.innerText = ""; 
+    STATUS_LINE.innerText = "// RENDERING COMPLETE. INITIATING ANALYSIS."; 
 }
 
 function renderKPIs() {
     KPI_CONTAINER.innerHTML = "";
     
     const titles = [
-        "Eficiencia Visitas → Reservas",
-        "Eficiencia Reservas → Operaciones",
-        "Eficiencia Valuaciones → Captaciones"
+        "EFECTIVIDAD DE CONVERSIÓN",
+        "EFECTIVIDAD DE CIERRE",
+        "EFECTIVIDAD DE ADQUISICIÓN"
+    ];
+
+    const subtitles = [
+        "RESERVAS/VISITAS",
+        "OPERACIONES/RESERVAS",
+        "CAPTACIONES/VALUACIONES"
     ];
 
     let vals = ["—", "—", "—"];
@@ -521,13 +618,14 @@ function renderKPIs() {
     }
 
     vals.forEach((v, i) => {
-        const displayValue = typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "—";
+        const displayValue = typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "N/A";
         
         KPI_CONTAINER.innerHTML += `
-        <div class="col-auto kpi-wrapper">
-            <div class="kpi-card">
-                <div class="kpi-title">${titles[i]}</div>
-                <div class="kpi-value">${displayValue}</div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="kpi-card-rect">
+                <div class="kpi-title-rect">${titles[i]}</div>
+                <div class="kpi-subtitle-rect">${subtitles[i]}</div>
+                <div class="kpi-value-rect">${displayValue}</div>
             </div>
         </div>`;
     });
