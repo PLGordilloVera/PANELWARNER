@@ -516,12 +516,37 @@ function renderChart() {
             return parts[2]; 
         });
     }
+    
+    // CONFIGURACIÓN MEJORADA DEL TOOLTIP PARA ALTO CONTRASTE Y EFECTO DIGITAL
+    const hoverLabelConfig = {
+        bgcolor: '#0A192F', // Fondo muy oscuro (color principal del dashboard)
+        bordercolor: '#FFD700', // Borde dorado para distinguirlo
+        font: {
+            color: '#ccd6f6', // Texto blanco brillante/plateado
+            family: 'Orbitron, sans-serif', // Fuente digital para efecto reloj
+            size: 14
+        },
+        namelength: 0 // NO MUESTRA EL NOMBRE DE LA TRAZA
+    };
+
+    // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP (ELIMINA PARÉNTESIS Y AÑO)
+    let hoverTemplate;
+    if (isMonthly) {
+        // Muestra Mes abreviado y el valor. (Ej: JUN, 6)
+        hoverTemplate = "<b>%{x|%b}</b>, %{y}<extra></extra>"; 
+    } else {
+        // Muestra el Día del mes y el valor. (Ej: 15, 3)
+        hoverTemplate = "<b>%{x|%d}</b>, %{y}<extra></extra>";
+    }
+    // NOTA: <extra></extra> elimina el nombre de la traza que aparece por defecto.
 
     const data = [
         {
             x, y, 
             type: "bar",
             name: "Conteo",
+            hovertemplate: hoverTemplate, // APLICAMOS LA PLANTILLA SIN PARENTESIS NI AÑO
+            hoverlabel: hoverLabelConfig, 
             marker: { 
                 color: "rgba(255, 215, 0, 0.7)", 
                 line: {
@@ -535,6 +560,8 @@ function renderChart() {
             type: "scatter", 
             mode: "lines+markers", 
             name: "Tendencia",
+            hovertemplate: hoverTemplate, // APLICAMOS LA PLANTILLA SIN PARENTESIS NI AÑO
+            hoverlabel: hoverLabelConfig, 
             line: { color: "#ccd6f6", width: 3 }, 
             marker: { 
                 color: "#0A192F", 
