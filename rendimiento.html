@@ -178,7 +178,7 @@ body {
 #plotly-graph {
     width: 100%;
     height: 60vh; 
-    min-height: 450px;
+    min-height: 450px; /* Altura mínima para PC/Tablet */
     border: none !important; /* BORDE ELIMINADO */
     box-shadow: none !important; /* SOMBRA ELIMINADA */
     border-radius: 0 !important; /* BORDE REDONDEADO ELIMINADO */
@@ -282,6 +282,11 @@ input:checked + .slider:before {
     .cyber-title h1 {
         letter-spacing: 5px; 
     }
+
+    /* AJUSTE CRÍTICO PARA LA PANTALLA MÓVIL (Gráfico) */
+    #plotly-graph {
+        min-height: 300px; /* Reducido de 450px a 300px en móvil */
+    }
 }
 </style>
 </head>
@@ -352,8 +357,8 @@ input:checked + .slider:before {
 
 <script>
 /* =================================================================================
-   LÓGICA DEL DASHBOARD (SIN CAMBIOS FUNCIONALES)
-   ================================================================================= */
+    LÓGICA DEL DASHBOARD 
+    ================================================================================= */
 
 // Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
 const API_URL = "https://script.google.com/macros/s/AKfycbycfQv6inU0szwqCIlveMX0GhGafli0p0pWSrp7AJjoY4K9jevDgeYCFQ14Tbo6Kf4m/exec";
@@ -508,44 +513,41 @@ function renderChart() {
         customTickText = x.map(dateStr => {
             const parts = dateStr.split('-');
             const monthIndex = parseInt(parts[1], 10) - 1;
-            return MESES_CORTOS[monthIndex] || parts[1];
+            // Retorna el mes abreviado y en MAYÚSCULAS para las marcas del eje y para el 'text'
+            return MESES_CORTOS[monthIndex] || parts[1]; 
         });
     } else {
         customTickText = x.map(dateStr => {
             const parts = dateStr.split('-');
+            // Retorna el día del mes
             return parts[2]; 
         });
     }
     
     // CONFIGURACIÓN MEJORADA DEL TOOLTIP PARA ALTO CONTRASTE Y EFECTO DIGITAL
     const hoverLabelConfig = {
-        bgcolor: '#0A192F', // Fondo muy oscuro (color principal del dashboard)
-        bordercolor: '#FFD700', // Borde dorado para distinguirlo
+        bgcolor: '#0A192F', 
+        bordercolor: '#FFD700', 
         font: {
-            color: '#ccd6f6', // Texto blanco brillante/plateado
-            family: 'Orbitron, sans-serif', // Fuente digital para efecto reloj
+            color: '#ccd6f6', 
+            family: 'Orbitron, sans-serif', 
             size: 14
         },
-        namelength: 0 // NO MUESTRA EL NOMBRE DE LA TRAZA
+        namelength: 0 
     };
 
-    // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP (ELIMINA PARÉNTESIS Y AÑO)
-    let hoverTemplate;
-    if (isMonthly) {
-        // Muestra Mes abreviado y el valor. (Ej: JUN, 6)
-        hoverTemplate = "<b>%{x|%b}</b>, %{y}<extra></extra>"; 
-    } else {
-        // Muestra el Día del mes y el valor. (Ej: 15, 3)
-        hoverTemplate = "<b>%{x|%d}</b>, %{y}<extra></extra>";
-    }
-    // NOTA: <extra></extra> elimina el nombre de la traza que aparece por defecto.
-
+    // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP
+    // Usamos %{text} para asegurar que se muestre el mes en mayúsculas (tomado de customTickText)
+    const hoverTemplate = "<b>%{text}</b>, %{y}<extra></extra>";
+    
     const data = [
         {
             x, y, 
+            // Usamos customTickText como la fuente de texto para el tooltip
+            text: customTickText,
             type: "bar",
             name: "Conteo",
-            hovertemplate: hoverTemplate, // APLICAMOS LA PLANTILLA SIN PARENTESIS NI AÑO
+            hovertemplate: hoverTemplate, 
             hoverlabel: hoverLabelConfig, 
             marker: { 
                 color: "rgba(255, 215, 0, 0.7)", 
@@ -557,10 +559,12 @@ function renderChart() {
         },
         {
             x, y, 
+            // Usamos customTickText como la fuente de texto para el tooltip
+            text: customTickText,
             type: "scatter", 
             mode: "lines+markers", 
             name: "Tendencia",
-            hovertemplate: hoverTemplate, // APLICAMOS LA PLANTILLA SIN PARENTESIS NI AÑO
+            hovertemplate: hoverTemplate, 
             hoverlabel: hoverLabelConfig, 
             line: { color: "#ccd6f6", width: 3 }, 
             marker: { 
@@ -592,6 +596,7 @@ function renderChart() {
             color: "#8892b0", 
             tickmode: 'array',
             tickvals: x,
+            // Las etiquetas de los ticks usan customTickText (ENE, FEB, etc.)
             ticktext: customTickText,
             gridcolor: "rgba(136, 146, 176, 0.15)", 
             linecolor: "#8892b0",
