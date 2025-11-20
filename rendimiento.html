@@ -17,8 +17,8 @@
 :root {
     /* PALETA ORIGINAL */
     --color-bg-main: #0A192F; 
-    --color-text-main: #ccd6f6; 
-    --color-text-secondary: #8892b0; 
+    --color-text-main: #f7f6c8; /* Color de texto ajustado a tu versión */
+    --color-text-secondary: #f8f8f8; /* Color de texto ajustado a tu versión */
     --color-accent-primary: #FFD700; /* DORADO */
     --color-card-bg: rgba(17, 34, 64, 0.95); /* Opaco */
     --color-border-line: #30415a; /* Borde de tarjeta más oscuro */
@@ -102,13 +102,18 @@ body {
 /* === KPI Cards (BORDES REDONDEADOS) === */
 /* ---------------------------------------------------- */
 .kpi-card-rect {
-    padding: 20px 25px; 
+    padding: 25px 25px; /* Aumentado el padding vertical */
     background-color: #081223;
     border: 1px solid var(--color-border-line);
     border-radius: var(--radius-large); 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.05); 
     position: relative;
     overflow: hidden;
+    /* CENTRADO PARA FLEX CONTENT */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .kpi-card-rect:hover {
@@ -130,21 +135,13 @@ body {
 
 .kpi-title-rect {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1.1rem; 
+    font-size: 1.4rem; /* Agrandado de 1.1rem a 1.4rem */
     color: var(--color-text-secondary);
     font-weight: 700;
     letter-spacing: 1.5px;
-    margin-bottom: 3px;
+    margin-bottom: 15px; /* Aumentado el margen inferior */
     text-transform: uppercase;
-}
-
-.kpi-subtitle-rect {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.85rem; 
-    color: var(--color-border-line);
-    margin-bottom: 10px; 
-    padding-bottom: 5px;
-    border-bottom: 1px solid rgba(136, 146, 176, 0.15); 
+    text-align: center; 
 }
 
 .kpi-value-rect {
@@ -155,6 +152,7 @@ body {
     text-shadow: 0 0 18px rgba(255, 215, 0, 0.8); 
     letter-spacing: 3px;
     display: block; 
+    text-align: center;
 }
 
 /* ---------------------------------------------------- */
@@ -249,6 +247,8 @@ input:checked + .slider:before {
     font-size: 0.95rem; 
     letter-spacing: 2px;
     font-weight: 700;
+    text-align: center;
+    display: block; /* Asegura que tome el ancho completo para centrar */
 }
 
 .form-select {
@@ -295,14 +295,14 @@ input:checked + .slider:before {
 <div class="main-content-wrapper">
 
     <header class="cyber-title">
-        <h1>DASHBOARD DE RENDIMIENTO WARNER</h1>
+        <h1>RENDIMIENTO AGENTES WARNER</h1>
     </header>
 
     <div class="row g-3 mb-3 justify-content-center">
 
         <div class="col-12 col-md-5 col-lg-4">
             <div class="card control-card">
-                <label for="agente-select" class="form-label">UNIDAD DE ANÁLISIS (AGENTE)</label>
+                <label for="agente-select" class="form-label">AGENTE</label>
                 <select id="agente-select" class="form-select">
                     <option value="">Cargando...</option>
                 </select>
@@ -311,14 +311,16 @@ input:checked + .slider:before {
 
         <div class="col-12 col-md-5 col-lg-4">
             <div class="card control-card">
-                <label for="accion-select" class="form-label">MÉTRICA DE SEGUIMIENTO</label>
+                <label for="accion-select" class="form-label">ACCIÓN</label>
                 <select id="accion-select" class="form-select">
                     <option value="CAPTACIONES">CAPTACIONES</option>
                     <option value="VALUACIONES">VALUACIONES</option>
                     <option value="CLIENTES">CLIENTES NUEVOS</option>
                     <option value="VISITAS">VISITAS</option>
                     <option value="RESERVAS">RESERVAS</option>
-                    <option value="OPERACIONES">OPERACIONES</option>
+                    <!-- Opciones de OPERACIONES actualizadas para reflejar el split de datos en el GS -->
+                    <option value="OPERACIONES COLOCADOR">OPERACIONES (COLOCADOR)</option>
+                    <option value="OPERACIONES CAPTADOR">OPERACIONES (CAPTADOR)</option>
                     <option value="RESEÑAS">RESEÑAS</option>
                 </select>
             </div>
@@ -361,7 +363,7 @@ input:checked + .slider:before {
     ================================================================================= */
 
 // Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
-const API_URL = "https://script.google.com/macros/s/AKfycbycfQv6inU0szwqCIlveMX0GhGafli0p0pWSrp7AJjoY4K9jevDgeYCFQ14Tbo6Kf4m/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwXf4fMDkmVfnUXQmMv98C5FYq3KWw3gG9IHPddTB0mZF9-EXIKI9mYVl12XGva1LUd/exec";
 const STATUS_LINE = document.getElementById("status-line");
 const AGENTE_SELECT = document.getElementById("agente-select");
 const ACCION_SELECT = document.getElementById("accion-select");
@@ -376,7 +378,8 @@ let AGENTES = [];
 
 let vistaActual = "mensual";
 let agenteActual = "TODOS";
-let accionActual = "CAPTACIONES";
+// Asegurarse de que el valor inicial coincida con una opción válida
+let accionActual = "CAPTACIONES"; 
 
 /* --- Utilidades --- */
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -390,6 +393,7 @@ function debounce(func, delay) {
 }
 
 function filterForAgentAndAction(i, agente, accion) {
+    // La clave es que i.accion ahora puede ser "OPERACIONES COLOCADOR" y debe coincidir exactamente con `accion`
     return (agente === "TODOS" || i.agente === agente) && i.accion === accion;
 }
 
@@ -537,7 +541,7 @@ function renderChart() {
     };
 
     // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP
-    // Usamos %{text} para asegurar que se muestre el mes en mayúsculas (tomado de customTickText)
+    // Usamos %{text} para asegurar que se muestre el mes/día en mayúsculas/normal
     const hoverTemplate = "<b>%{text}</b>, %{y}<extra></extra>";
     
     const data = [
@@ -596,19 +600,22 @@ function renderChart() {
             color: "#8892b0", 
             tickmode: 'array',
             tickvals: x,
-            // Las etiquetas de los ticks usan customTickText (ENE, FEB, etc.)
+            // Las etiquetas de los ticks usan customTickText (ENE, FEB, etc. o días)
             ticktext: customTickText,
             gridcolor: "rgba(136, 146, 176, 0.15)", 
             linecolor: "#8892b0",
             zerolinecolor: "#8892b0",
+            range: isMonthly ? null : [x[0], x[x.length - 1]], // Ajuste de rango para diario
+            dtick: isMonthly ? null : 1,
+            automargin: true 
         },
         yaxis: {
             color: "#8892b0", 
             gridcolor: "rgba(136, 146, 176, 0.15)",
             linecolor: "#8892b0",
             zerolinecolor: "#8892b0",
-            range: isMonthly ? null : [0, 5], 
-            dtick: isMonthly ? null : 1 
+            rangemode: 'tozero', // Empezar en cero
+            automargin: true 
         },
         // PROPIEDADES CLAVE PARA LA TRANSPARENCIA TOTAL
         plot_bgcolor: "transparent", 
@@ -626,16 +633,11 @@ function renderChart() {
 function renderKPIs() {
     KPI_CONTAINER.innerHTML = "";
     
+    // Títulos actualizados para reflejar el cambio y ser más descriptivos
     const titles = [
-        "EFECTIVIDAD DE CONVERSIÓN",
-        "EFECTIVIDAD DE CIERRE",
-        "EFECTIVIDAD DE ADQUISICIÓN"
-    ];
-
-    const subtitles = [
-        "RESERVAS/VISITAS",
-        "OPERACIONES/RESERVAS",
-        "CAPTACIONES/VALUACIONES"
+        "CONVERSIÓN VISITAS",
+        "CONVERSIÓN RESERVAS",
+        "CONVERSIÓN VALUACIONES"
     ];
 
     let vals = ["—", "—", "—"];
@@ -656,7 +658,6 @@ function renderKPIs() {
         <div class="col-12 col-md-6 col-lg-4">
             <div class="kpi-card-rect">
                 <div class="kpi-title-rect">${titles[i]}</div>
-                <div class="kpi-subtitle-rect">${subtitles[i]}</div>
                 <div class="kpi-value-rect">${displayValue}</div>
             </div>
         </div>`;
@@ -664,29 +665,32 @@ function renderKPIs() {
 }
 
 /* --- Eventos --- */
-cargarDatos();
+document.addEventListener("DOMContentLoaded", () => {
+    cargarDatos();
 
-document.getElementById("mini-toggle-view").addEventListener("change", (e) => {
-    vistaActual = e.target.checked ? "diario" : "mensual";
-    renderChart();
+    document.getElementById("mini-toggle-view").addEventListener("change", (e) => {
+        vistaActual = e.target.checked ? "diario" : "mensual";
+        renderChart();
+    });
+
+    AGENTE_SELECT.addEventListener("change", (e) => {
+        agenteActual = e.target.value;
+        renderKPIs(); 
+        renderChart();
+    });
+
+    ACCION_SELECT.addEventListener("change", (e) => {
+        accionActual = e.target.value;
+        renderChart();
+    });
+
+    const debouncedResize = debounce(() => {
+        // Redibujar Plotly en resize para asegurar la responsividad
+        Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
+    }, 250);
+
+    window.addEventListener('resize', debouncedResize);
 });
-
-AGENTE_SELECT.addEventListener("change", (e) => {
-    agenteActual = e.target.value;
-    renderKPIs(); 
-    renderChart();
-});
-
-ACCION_SELECT.addEventListener("change", (e) => {
-    accionActual = e.target.value;
-    renderChart();
-});
-
-const debouncedResize = debounce(() => {
-    Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
-}, 250);
-
-window.addEventListener('resize', debouncedResize);
 
 </script>
 
