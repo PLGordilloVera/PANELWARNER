@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Rendimiento Agentes WARNER - MÁXIMO DETALLE Y COMPACTO</title>
+<base target="_top" />
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Orbitron:wght@600;800&family=Inter:wght@400&display=swap" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<style>
+/* ---------------------------------------------------- */
+/* === ESTILOS GENERALES Y PROPORCIONES (COMPACTO) === */
+/* ---------------------------------------------------- */
+:root {
+    /* PALETA ORIGINAL */
+    --color-bg-main: #0A192F; 
+    --color-text-main: #f7f6c8; /* Color de texto ajustado a tu versión */
+    --color-text-secondary: #f8f8f8; /* Color de texto ajustado a tu versión */
+    --color-accent-primary: #FFD700; /* DORADO */
+    --color-card-bg: rgba(17, 34, 64, 0.95); /* Opaco */
+    --color-border-line: #30415a; /* Borde de tarjeta más oscuro */
+    --spacing-unit: 18px; /* Unidad base más pequeña para compactar */
+    --radius-large: 8px; /* BORDES REDONDEADOS */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-bg-main) !important; 
+    color: var(--color-text-main) !important;
+    line-height: 1.5;
+    background-image: radial-gradient(circle at center, rgba(17, 34, 64, 0.2) 1px, transparent 0%);
+    background-size: 15px 15px;
+}
+
+.main-content-wrapper {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: var(--spacing-unit) 30px; 
+}
+
+/* ---------------------------------------------------- */
+/* === TÍTULO === */
+/* ---------------------------------------------------- */
+.cyber-title {
+    text-align: center;
+    margin-bottom: var(--spacing-unit); 
+    padding: 15px 0;
+    position: relative;
+    border-bottom: 2px solid var(--color-border-line); 
+    border-top: 2px solid var(--color-border-line);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
+}
+
+.cyber-title h1 {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--color-text-main);
+    font-size: clamp(2.2rem, 5vw, 3.8rem); 
+    font-weight: 700;
+    letter-spacing: 10px; 
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.6); 
+}
+
+.cyber-title::before, .cyber-title::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    border: 3px solid var(--color-accent-primary);
+    opacity: 0.8;
+}
+.cyber-title::before { 
+    top: 0; left: 0; 
+    border-right: none; 
+    border-bottom: none; 
+}
+.cyber-title::after { 
+    top: 0; right: 0; 
+    border-left: none; 
+    border-bottom: none; 
+}
+
+
+/* ---------------------------------------------------- */
+/* === CONTROLES Y TARJETAS (BORDES REDONDEADOS) === */
+/* ---------------------------------------------------- */
+.card {
+    border: 2px solid var(--color-border-line); 
+    border-radius: var(--radius-large); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+    background-color: var(--color-card-bg);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.control-card { 
+    padding: 18px 22px; 
+}
+
+/* ---------------------------------------------------- */
+/* === KPI Cards (BORDES REDONDEADOS) === */
+/* ---------------------------------------------------- */
+.kpi-card-rect {
+    padding: 25px 25px; /* Aumentado el padding vertical */
+    background-color: #081223;
+    border: 1px solid var(--color-border-line);
+    border-radius: var(--radius-large); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.05); 
+    position: relative;
+    overflow: hidden;
+    /* CENTRADO PARA FLEX CONTENT */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.kpi-card-rect:hover {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
+    transform: translateY(-2px);
+}
+
+.kpi-card-rect::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-primary) 10%, transparent 90%);
+    opacity: 0.7;
+    border-top-left-radius: var(--radius-large);
+    border-top-right-radius: var(--radius-large);
+}
+
+.kpi-title-rect {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4rem; /* Agrandado de 1.1rem a 1.4rem */
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 15px; /* Aumentado el margen inferior */
+    text-transform: uppercase;
+    text-align: center; 
+}
+
+.kpi-value-rect {
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 3rem; 
+    font-weight: 800;
+    color: var(--color-accent-primary);
+    text-shadow: 0 0 18px rgba(255, 215, 0, 0.8); 
+    letter-spacing: 3px;
+    display: block; 
+    text-align: center;
+}
+
+/* ---------------------------------------------------- */
+/* === CHART AREA (TOTALMENTE TRANSPARENTE) === */
+/* ---------------------------------------------------- */
+
+/* Hacemos que la tarjeta contenedora del gráfico sea invisible */
+#chart-card-container {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 40px !important; 
+}
+
+.chart-card-content {
+    position: relative;
+    padding: 0; /* Eliminamos el padding para que el gráfico ocupe más espacio */
+}
+
+/* ELIMINAMOS EL BORDE Y SOMBRA DEL GRAFICO INTERNO */
+#plotly-graph {
+    width: 100%;
+    height: 60vh; 
+    min-height: 450px; /* Altura mínima para PC/Tablet */
+    border: none !important; /* BORDE ELIMINADO */
+    box-shadow: none !important; /* SOMBRA ELIMINADA */
+    border-radius: 0 !important; /* BORDE REDONDEADO ELIMINADO */
+}
+
+.toggle-container {
+    position: absolute; 
+    /* Ajustado para flotar sobre el área del gráfico */
+    top: 10px; 
+    right: 10px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    padding: 6px 12px;
+    background-color: #0b1a33;
+    border: 2px solid var(--color-accent-primary); 
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    border-radius: 4px;
+}
+
+/* Línea de estado del terminal */
+#status-line {
+    border-bottom: none !important; /* LÍNEA PUNTEADA ELIMINADA */
+    padding-bottom: 10px;
+    margin-top: 5px;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+/* Resto de estilos de formulario y switch (sin cambios) */
+.toggle-label {
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+}
+
+.switch { position: relative; display: inline-block; width: 50px; height: 26px; } 
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
+    background-color: #112240; 
+    border: 2px solid var(--color-accent-primary); 
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute; content: "";
+    height: 16px; width: 16px; left: 4px; bottom: 4px; 
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { 
+    background-color: #081223; 
+    border-color: #ccd6f6; 
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px); 
+}
+
+.form-label {
+    color: var(--color-accent-primary);
+    font-size: 0.95rem; 
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-align: center;
+    display: block; /* Asegura que tome el ancho completo para centrar */
+}
+
+.form-select {
+    border-radius: 3px;
+    background-color: #05142a; 
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border-line);
+    font-size: 1rem; 
+}
+
+.form-select:focus {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 0.15rem rgba(255, 215, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* ---------------------------------------------------- */
+/* === AJUSTES RESPONSIVOS (PARA MÓVILES) === */
+/* ---------------------------------------------------- */
+@media (max-width: 767.98px) {
+    /* Optimizar el padding general en pantallas pequeñas */
+    .main-content-wrapper {
+        padding: var(--spacing-unit) 15px; /* Reducir el padding lateral */
+    }
+
+    /* Reducir el tamaño del valor KPI para que quepa mejor */
+    .kpi-value-rect {
+        font-size: 2.5rem; /* De 3rem a 2.5rem */
+    }
+
+    /* Reducir el espaciado entre letras del título principal para que quepa mejor en ancho */
+    .cyber-title h1 {
+        letter-spacing: 5px; 
+    }
+
+    /* AJUSTE CRÍTICO PARA LA PANTALLA MÓVIL (Gráfico) */
+    #plotly-graph {
+        min-height: 300px; /* Reducido de 450px a 300px en móvil */
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="main-content-wrapper">
+
+    <header class="cyber-title">
+        <h1>RENDIMIENTO AGENTES WARNER</h1>
+    </header>
+
+    <div class="row g-3 mb-3 justify-content-center">
+
+        <div class="col-12 col-md-5 col-lg-4">
+            <div class="card control-card">
+                <label for="agente-select" class="form-label">AGENTE</label>
+                <select id="agente-select" class="form-select">
+                    <option value="">Cargando...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-5 col-lg-4">
+            <div class="card control-card">
+                <label for="accion-select" class="form-label">ACCIÓN</label>
+                <select id="accion-select" class="form-select">
+                    <option value="CAPTACIONES">CAPTACIONES</option>
+                    <option value="VALUACIONES">VALUACIONES</option>
+                    <option value="CLIENTES">CLIENTES NUEVOS</option>
+                    <option value="VISITAS">VISITAS</option>
+                    <option value="RESERVAS">RESERVAS</option>
+                    <!-- Opciones de OPERACIONES actualizadas para reflejar el split de datos en el GS -->
+                    <option value="OPERACIONES COLOCADOR">OPERACIONES (COLOCADOR)</option>
+                    <option value="OPERACIONES CAPTADOR">OPERACIONES (CAPTADOR)</option>
+                    <option value="RESEÑAS">RESEÑAS</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="kpi-container" class="row mb-3 g-3"> 
+    </div>
+
+    <div id="chart-card-container" class="card mb-5"> 
+        <div class="chart-card-content">
+
+            <div class="toggle-container">
+                <span class="toggle-label" style="color:var(--color-text-secondary);">MENSUAL</span>
+
+                <label class="switch">
+                    <input type="checkbox" id="mini-toggle-view">
+                    <span class="slider"></span>
+                </label>
+
+                <span class="toggle-label" style="color:var(--color-accent-primary);">DIARIO</span>
+            </div>
+
+            <div id="status-line" class="text-center" style="color:var(--color-accent-primary); font-family: 'Rajdhani', sans-serif;">// INICIALIZANDO INTERFAZ Y REQUIRIENDO DATOS...</div>
+            <div id="plotly-graph"></div>
+        </div>
+    </div>
+
+
+    <footer class="footer-text mt-4 text-center" style="color:var(--color-text-secondary); font-size: 0.8rem; font-family: 'Rajdhani', sans-serif;">
+        [SYSTEM STATUS OK] :: DATALINK STABLE. :: OPERATION WARNER V8.2 ONLINE.
+    </footer>
+
+</div>
+
+<script>
+/* =================================================================================
+    LÓGICA DEL DASHBOARD 
+    ================================================================================= */
+
+// Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
+const API_URL = "https://script.google.com/macros/s/AKfycbwXf4fMDkmVfnUXQmMv98C5FYq3KWw3gG9IHPddTB0mZF9-EXIKI9mYVl12XGva1LUd/exec";
+const STATUS_LINE = document.getElementById("status-line");
+const AGENTE_SELECT = document.getElementById("agente-select");
+const ACCION_SELECT = document.getElementById("accion-select");
+const KPI_CONTAINER = document.getElementById("kpi-container");
+const PLOTLY_GRAPH_ID = "plotly-graph";
+
+const MESES_CORTOS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+let DATA = [];
+let INDICES = {};
+let AGENTES = [];
+
+let vistaActual = "mensual";
+let agenteActual = "TODOS";
+// Asegurarse de que el valor inicial coincida con una opción válida
+let accionActual = "CAPTACIONES"; 
+
+/* --- Utilidades --- */
+const pad2 = (n) => String(n).padStart(2, '0');
+
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+function filterForAgentAndAction(i, agente, accion) {
+    // La clave es que i.accion ahora puede ser "OPERACIONES COLOCADOR" y debe coincidir exactamente con `accion`
+    return (agente === "TODOS" || i.agente === agente) && i.accion === accion;
+}
+
+function aggregateSum(items, keyExtractor) {
+    const map = new Map();
+    items.forEach(i => {
+        const k = keyExtractor(i);
+        const cantidad = +i.cantidad || 0;
+        map.set(k, (map.get(k) || 0) + cantidad);
+    });
+    return Array.from(map.entries()).map(([x, y]) => ({ x, y }));
+}
+
+/* --- Cargar datos --- */
+async function cargarDatos() {
+    STATUS_LINE.innerText = "// CONECTANDO A BASE DE DATOS E INICIANDO STREAM...";
+    try {
+        const r = await fetch(API_URL);
+        
+        if (!r.ok) {
+            console.error("Error al obtener datos del API. Código HTTP:", r.status, r.statusText);
+            throw new Error(`Error en el API (HTTP ${r.status}).`);
+        }
+        
+        const j = await r.json();
+
+        DATA = j.evolucion_data || [];
+        INDICES = j.indices_anuales || {};
+        AGENTES = j.agentes_activos || [];
+
+        if (!AGENTES.includes("TODOS")) AGENTES.unshift("TODOS");
+        
+        AGENTE_SELECT.innerHTML = AGENTES.map(a => `<option value="${a}">${a}</option>`).join("");
+        
+        STATUS_LINE.innerText = "// STREAM ESTABLECIDO. DATOS OK."; 
+        
+        renderKPIs();
+        renderChart();
+    } catch (e) {
+        console.error("Error al cargar datos. Verifique la URL y permisos:", e);
+        let errorMsg = `// ERROR CRÍTICO DE CONEXIÓN. REVISAR API_URL.`;
+        if (e.message && e.message.includes('Failed to fetch')) {
+             errorMsg = `// ERROR DE RED: API NO ACCESIBLE.`;
+        } else if (e.message) {
+            errorMsg = `// ERROR DEL API: ${e.message}.`;
+        }
+        STATUS_LINE.innerText = errorMsg;
+    }
+}
+
+/* --- Lógica de obtención de series (Mantenida) --- */
+function getDailyRecordsOnly(agente, accion) {
+    return DATA.filter(i =>
+        filterForAgentAndAction(i, agente, accion) &&
+        i.fecha_diaria !== null 
+    );
+}
+
+function getMonthlySeries(agente, accion) {
+    const T = new Date();
+    const Y = T.getFullYear();
+    const M = T.getMonth() + 1;
+
+    const months = Array.from({ length: M }, (_, i) => `${Y}-${pad2(i + 1)}`);
+
+    const dailyRecords = getDailyRecordsOnly(agente, accion);
+    
+    const filteredForMonth = dailyRecords.map(d => {
+        const key = d.fecha_mensual;
+        return { ...d, key };
+    }).filter(Boolean);
+
+    const agg = aggregateSum(filteredForMonth, i => i.key);
+
+    return months.map(m => {
+        const found = agg.find(a => a.x === m);
+        return { x: `${m}-01`, y: found ? found.y : 0 };
+    });
+}
+
+function getDailySeries(agente, accion) {
+    const T = new Date();
+    const Y = T.getFullYear();
+    const M = pad2(T.getMonth() + 1);
+    const D = T.getDate();
+
+    const days = Array.from({ length: D }, (_, i) => `${Y}-${M}-${pad2(i + 1)}`);
+    const currentMonthKey = `${Y}-${M}`;
+
+    const dailyRecords = getDailyRecordsOnly(agente, accion);
+
+    const filteredForDay = dailyRecords.filter(i => 
+        i.fecha_mensual === currentMonthKey
+    );
+    
+    const agg = aggregateSum(filteredForDay, i => i.fecha_diaria); 
+
+    return days.map(d => {
+        const found = agg.find(x => x.x === d);
+        return { x: d, y: found ? found.y : 0 }; 
+    });
+}
+
+
+/* --- Renderizado --- */
+
+function renderChart() {
+    STATUS_LINE.innerText = "// RENDERIZANDO GRÁFICO DE EVOLUCIÓN...";
+    
+    const serie = vistaActual === "mensual"
+                      ? getMonthlySeries(agenteActual, accionActual)
+                      : getDailySeries(agenteActual, accionActual);
+
+    const x = serie.map(s => s.x);
+    const y = serie.map(s => s.y);
+    
+    const isMonthly = vistaActual === "mensual";
+    
+    let customTickText = [];
+    if (isMonthly) {
+        customTickText = x.map(dateStr => {
+            const parts = dateStr.split('-');
+            const monthIndex = parseInt(parts[1], 10) - 1;
+            // Retorna el mes abreviado y en MAYÚSCULAS para las marcas del eje y para el 'text'
+            return MESES_CORTOS[monthIndex] || parts[1]; 
+        });
+    } else {
+        customTickText = x.map(dateStr => {
+            const parts = dateStr.split('-');
+            // Retorna el día del mes
+            return parts[2]; 
+        });
+    }
+    
+    // CONFIGURACIÓN MEJORADA DEL TOOLTIP PARA ALTO CONTRASTE Y EFECTO DIGITAL
+    const hoverLabelConfig = {
+        bgcolor: '#0A192F', 
+        bordercolor: '#FFD700', 
+        font: {
+            color: '#ccd6f6', 
+            family: 'Orbitron, sans-serif', 
+            size: 14
+        },
+        namelength: 0 
+    };
+
+    // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP
+    // Usamos %{text} para asegurar que se muestre el mes/día en mayúsculas/normal
+    const hoverTemplate = "<b>%{text}</b>, %{y}<extra></extra>";
+    
+    const data = [
+        {
+            x, y, 
+            // Usamos customTickText como la fuente de texto para el tooltip
+            text: customTickText,
+            type: "bar",
+            name: "Conteo",
+            hovertemplate: hoverTemplate, 
+            hoverlabel: hoverLabelConfig, 
+            marker: { 
+                color: "rgba(255, 215, 0, 0.7)", 
+                line: {
+                    color: "rgba(255, 215, 0, 1)",
+                    width: 1
+                }
+            } 
+        },
+        {
+            x, y, 
+            // Usamos customTickText como la fuente de texto para el tooltip
+            text: customTickText,
+            type: "scatter", 
+            mode: "lines+markers", 
+            name: "Tendencia",
+            hovertemplate: hoverTemplate, 
+            hoverlabel: hoverLabelConfig, 
+            line: { color: "#ccd6f6", width: 3 }, 
+            marker: { 
+                color: "#0A192F", 
+                size: 10, 
+                line: {
+                    color: "#FFD700", 
+                    width: 2
+                }
+            }
+        }
+    ];
+
+    const layout = {
+        title: {
+            text: `EVOLUCIÓN DE ${accionActual} [UNIDAD: ${agenteActual}]`,
+            font: {
+                color: '#ccd6f6',
+                family: 'Rajdhani, sans-serif',
+                size: 20
+            },
+            y: 0.95,
+            x: 0.02,
+            xref: 'paper',
+            xanchor: 'auto'
+        },
+        xaxis: {
+            tickangle: 0, 
+            color: "#8892b0", 
+            tickmode: 'array',
+            tickvals: x,
+            // Las etiquetas de los ticks usan customTickText (ENE, FEB, etc. o días)
+            ticktext: customTickText,
+            gridcolor: "rgba(136, 146, 176, 0.15)", 
+            linecolor: "#8892b0",
+            zerolinecolor: "#8892b0",
+            range: isMonthly ? null : [x[0], x[x.length - 1]], // Ajuste de rango para diario
+            dtick: isMonthly ? null : 1,
+            automargin: true 
+        },
+        yaxis: {
+            color: "#8892b0", 
+            gridcolor: "rgba(136, 146, 176, 0.15)",
+            linecolor: "#8892b0",
+            zerolinecolor: "#8892b0",
+            rangemode: 'tozero', // Empezar en cero
+            automargin: true 
+        },
+        // PROPIEDADES CLAVE PARA LA TRANSPARENCIA TOTAL
+        plot_bgcolor: "transparent", 
+        paper_bgcolor: "transparent",
+        // FIN PROPIEDADES CLAVE
+        margin: { t: 50, b: 50, l: 50, r: 20 }, 
+        showlegend: false
+    };
+
+    Plotly.newPlot(PLOTLY_GRAPH_ID, data, layout, { responsive: true, displayModeBar: false });
+    
+    STATUS_LINE.innerText = "// RENDERING COMPLETE. INITIATING ANALYSIS."; 
+}
+
+function renderKPIs() {
+    KPI_CONTAINER.innerHTML = "";
+    
+    // Títulos actualizados para reflejar el cambio y ser más descriptivos
+    const titles = [
+        "CONVERSIÓN VISITAS",
+        "CONVERSIÓN RESERVAS",
+        "CONVERSIÓN VALUACIONES"
+    ];
+
+    let vals = ["—", "—", "—"];
+
+    if (agenteActual !== "TODOS") {
+        const k = INDICES[agenteActual] || {};
+        vals = [
+            k.Efectividad_Visitas,
+            k.Efectividad_Reservas,
+            k.Efectividad_Valuaciones
+        ];
+    }
+
+    vals.forEach((v, i) => {
+        const displayValue = typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "N/A";
+        
+        KPI_CONTAINER.innerHTML += `
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="kpi-card-rect">
+                <div class="kpi-title-rect">${titles[i]}</div>
+                <div class="kpi-value-rect">${displayValue}</div>
+            </div>
+        </div>`;
+    });
+}
+
+/* --- Eventos --- */
+document.addEventListener("DOMContentLoaded", () => {
+    cargarDatos();
+
+    document.getElementById("mini-toggle-view").addEventListener("change", (e) => {
+        vistaActual = e.target.checked ? "diario" : "mensual";
+        renderChart();
+    });
+
+    AGENTE_SELECT.addEventListener("change", (e) => {
+        agenteActual = e.target.value;
+        renderKPIs(); 
+        renderChart();
+    });
+
+    ACCION_SELECT.addEventListener("change", (e) => {
+        accionActual = e.target.value;
+        renderChart();
+    });
+
+    const debouncedResize = debounce(() => {
+        // Redibujar Plotly en resize para asegurar la responsividad
+        Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
+    }, 250);
+
+    window.addEventListener('resize', debouncedResize);
+});
+
+</script>
+
+</body>
+</html>
