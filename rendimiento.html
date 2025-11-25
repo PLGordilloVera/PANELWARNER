@@ -314,18 +314,15 @@ input:checked + .slider:before {
                 <label for="accion-select" class="form-label">ACCIÓN</label>
                 <select id="accion-select" class="form-select">
                     <option value="CAPTACIONES">CAPTACIONES</option>
-                    <option value="VALUACIONES">VALUACIONES</option>
-                    <option value="CLIENTES">CLIENTES COMPRADORES</option>
-                    <option value="VISITAS">VISITAS</option>
-                    <option value="RESERVAS">RESERVAS</option>
-                    
-                    <option value="OPERACIONES COLOCADOR">OPERACIONES (COLOCADOR)</option>
-                    <option value="OPERACIONES CAPTADOR">OPERACIONES (CAPTADOR)</option>
-                    
-                    <option value="CLIENTES VENDEDORES">CLIENTES VENDEDORES</option>
                     <option value="CARTELES">CARTELES</option>
-                    
+                    <option value="CLIENTES">CLIENTES COMPRADORES</option>
+                    <option value="CLIENTES VENDEDORES">CLIENTES VENDEDORES</option>
+                    <option value="OPERACIONES CAPTADOR">OPERACIONES (CAPTADOR)</option>
+                    <option value="OPERACIONES COLOCADOR">OPERACIONES (COLOCADOR)</option>
+                    <option value="RESERVAS">RESERVAS</option>
                     <option value="RESEÑAS">RESEÑAS</option>
+                    <option value="VALUACIONES">VALUACIONES</option>
+                    <option value="VISITAS">VISITAS</option>
                 </select>
             </div>
         </div>
@@ -383,7 +380,7 @@ let AGENTES = [];
 
 let vistaActual = "mensual";
 let agenteActual = "TODOS";
-// Asegurarse de que el valor inicial coincida con una opción válida
+// Asegurarse de que el valor inicial coincida con una opción válida (se ha cambiado a la primera en la lista ordenada)
 let accionActual = "CAPTACIONES"; 
 
 /* --- Utilidades --- */
@@ -429,8 +426,17 @@ async function cargarDatos() {
         INDICES = j.indices_anuales || {};
         AGENTES = j.agentes_activos || [];
 
-        if (!AGENTES.includes("TODOS")) AGENTES.unshift("TODOS");
+        // 1. Ordenar la lista de agentes alfabéticamente
+        AGENTES.sort((a, b) => a.localeCompare(b));
         
+        // 2. Agregar "TODOS" al inicio (si no existe) y asegurarnos que quede primero
+        const todosIndex = AGENTES.indexOf("TODOS");
+        if (todosIndex > -1) {
+            AGENTES.splice(todosIndex, 1);
+        }
+        AGENTES.unshift("TODOS");
+        
+        // 3. Renderizar las opciones ordenadas
         AGENTE_SELECT.innerHTML = AGENTES.map(a => `<option value="${a}">${a}</option>`).join("");
         
         STATUS_LINE.innerText = "// STREAM ESTABLECIDO. DATOS OK."; 
