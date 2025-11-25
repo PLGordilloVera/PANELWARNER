@@ -315,12 +315,16 @@ input:checked + .slider:before {
                 <select id="accion-select" class="form-select">
                     <option value="CAPTACIONES">CAPTACIONES</option>
                     <option value="VALUACIONES">VALUACIONES</option>
-                    <option value="CLIENTES">CLIENTES NUEVOS</option>
+                    <option value="CLIENTES">CLIENTES COMPRADORES</option>
                     <option value="VISITAS">VISITAS</option>
                     <option value="RESERVAS">RESERVAS</option>
-                    <!-- Opciones de OPERACIONES actualizadas para reflejar el split de datos en el GS -->
+                    
                     <option value="OPERACIONES COLOCADOR">OPERACIONES (COLOCADOR)</option>
                     <option value="OPERACIONES CAPTADOR">OPERACIONES (CAPTADOR)</option>
+                    
+                    <option value="CLIENTES VENDEDORES">CLIENTES VENDEDORES</option>
+                    <option value="CARTELES">CARTELES</option>
+                    
                     <option value="RESEÑAS">RESEÑAS</option>
                 </select>
             </div>
@@ -363,7 +367,8 @@ input:checked + .slider:before {
     ================================================================================= */
 
 // Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
-const API_URL = "https://script.google.com/macros/s/AKfycbwXf4fMDkmVfnUXQmMv98C5FYq3KWw3gG9IHPddTB0mZF9-EXIKI9mYVl12XGva1LUd/exec";
+// ⚠️ ¡IMPORTANTE! Revisa que esta URL sea la de tu Script desplegado.
+const API_URL = "https://script.google.com/macros/s/AKfycbwyiN4vkT65DACYzcSmXesnBtY5cLpEcFcjCSGxOT_uF94JNAzgef3f9OsEkrtrEVyD/exec";
 const STATUS_LINE = document.getElementById("status-line");
 const AGENTE_SELECT = document.getElementById("agente-select");
 const ACCION_SELECT = document.getElementById("accion-select");
@@ -393,7 +398,7 @@ function debounce(func, delay) {
 }
 
 function filterForAgentAndAction(i, agente, accion) {
-    // La clave es que i.accion ahora puede ser "OPERACIONES COLOCADOR" y debe coincidir exactamente con `accion`
+    // La clave es que i.accion debe coincidir exactamente con `accion` ("CLIENTES VENDEDORES" o "CARTELES INSTALADOS")
     return (agente === "TODOS" || i.agente === agente) && i.accion === accion;
 }
 
@@ -504,8 +509,8 @@ function renderChart() {
     STATUS_LINE.innerText = "// RENDERIZANDO GRÁFICO DE EVOLUCIÓN...";
     
     const serie = vistaActual === "mensual"
-                      ? getMonthlySeries(agenteActual, accionActual)
-                      : getDailySeries(agenteActual, accionActual);
+                             ? getMonthlySeries(agenteActual, accionActual)
+                             : getDailySeries(agenteActual, accionActual);
 
     const x = serie.map(s => s.x);
     const y = serie.map(s => s.y);
