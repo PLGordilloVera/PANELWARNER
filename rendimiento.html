@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard Rendimiento Agentes WARNER - MÁXIMO DETALLE Y COMPACTO</title>
+<title>Dashboard Rendimiento Agentes WARNER - PRO TRADING VIEW</title>
 <base target="_top" />
 
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Orbitron:wght@600;800&family=Inter:wght@400&display=swap" rel="stylesheet" />
@@ -12,18 +12,19 @@
 
 <style>
 /* ---------------------------------------------------- */
-/* === ESTILOS GENERALES Y PROPORCIONES (COMPACTO) === */
+/* === ESTILOS GENERALES Y TEMÁTICA === */
 /* ---------------------------------------------------- */
 :root {
-    /* PALETA ORIGINAL */
     --color-bg-main: #0A192F; 
-    --color-text-main: #f7f6c8; /* Color de texto ajustado a tu versión */
-    --color-text-secondary: #f8f8f8; /* Color de texto ajustado a tu versión */
+    --color-text-main: #f7f6c8;
+    --color-text-secondary: #f8f8f8;
     --color-accent-primary: #FFD700; /* DORADO */
-    --color-card-bg: rgba(17, 34, 64, 0.95); /* Opaco */
-    --color-border-line: #30415a; /* Borde de tarjeta más oscuro */
-    --spacing-unit: 18px; /* Unidad base más pequeña para compactar */
-    --radius-large: 8px; /* BORDES REDONDEADOS */
+    --color-accent-success: #00ff9d; /* VERDE NEÓN */
+    --color-accent-danger: #ff4d4d;  /* ROJO NEÓN */
+    --color-card-bg: rgba(17, 34, 64, 0.95);
+    --color-border-line: #30415a;
+    --spacing-unit: 18px;
+    --radius-large: 8px;
 }
 
 body {
@@ -71,20 +72,12 @@ body {
     border: 3px solid var(--color-accent-primary);
     opacity: 0.8;
 }
-.cyber-title::before { 
-    top: 0; left: 0; 
-    border-right: none; 
-    border-bottom: none; 
-}
-.cyber-title::after { 
-    top: 0; right: 0; 
-    border-left: none; 
-    border-bottom: none; 
-}
+.cyber-title::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+.cyber-title::after { top: 0; right: 0; border-left: none; border-bottom: none; }
 
 
 /* ---------------------------------------------------- */
-/* === CONTROLES Y TARJETAS (BORDES REDONDEADOS) === */
+/* === CONTROLES === */
 /* ---------------------------------------------------- */
 .card {
     border: 2px solid var(--color-border-line); 
@@ -94,26 +87,54 @@ body {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.control-card { 
-    padding: 18px 22px; 
+.control-card { padding: 18px 22px; }
+
+.form-label {
+    color: var(--color-accent-primary);
+    font-size: 0.95rem; 
+    letter-spacing: 2px;
+    font-weight: 700;
+    text-align: center;
+    display: block; 
+}
+
+/* Selectores Personalizados Cyberpunk */
+.form-select {
+    border-radius: 3px;
+    background-color: rgba(10, 25, 47, 0.8) !important;
+    color: var(--color-text-secondary) !important;
+    border: 1px solid var(--color-border-line) !important;
+    font-size: 1rem; 
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23FFD700' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.form-select:focus {
+    border-color: var(--color-accent-primary) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2) !important;
+    outline: none;
 }
 
 /* ---------------------------------------------------- */
-/* === KPI Cards (BORDES REDONDEADOS) === */
+/* === KPI Cards === */
 /* ---------------------------------------------------- */
 .kpi-card-rect {
-    padding: 25px 25px; /* Aumentado el padding vertical */
+    padding: 25px 25px; 
     background-color: #081223;
     border: 1px solid var(--color-border-line);
     border-radius: var(--radius-large); 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 215, 0, 0.05); 
     position: relative;
     overflow: hidden;
-    /* CENTRADO PARA FLEX CONTENT */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: transform 0.3s;
 }
 
 .kpi-card-rect:hover {
@@ -129,17 +150,15 @@ body {
     width: 100%; height: 2px;
     background: linear-gradient(90deg, var(--color-accent-primary) 10%, transparent 90%);
     opacity: 0.7;
-    border-top-left-radius: var(--radius-large);
-    border-top-right-radius: var(--radius-large);
 }
 
 .kpi-title-rect {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1.4rem; /* Agrandado de 1.1rem a 1.4rem */
+    font-size: 1.4rem; 
     color: var(--color-text-secondary);
     font-weight: 700;
     letter-spacing: 1.5px;
-    margin-bottom: 15px; /* Aumentado el margen inferior */
+    margin-bottom: 15px; 
     text-transform: uppercase;
     text-align: center; 
 }
@@ -148,18 +167,16 @@ body {
     font-family: 'Orbitron', sans-serif; 
     font-size: 3rem; 
     font-weight: 800;
-    color: var(--color-accent-primary);
-    text-shadow: 0 0 18px rgba(255, 215, 0, 0.8); 
+    color: var(--color-accent-primary); 
+    text-shadow: 0 0 18px rgba(0,0,0, 0.5); 
     letter-spacing: 3px;
     display: block; 
     text-align: center;
 }
 
 /* ---------------------------------------------------- */
-/* === CHART AREA (TOTALMENTE TRANSPARENTE) === */
+/* === CHART AREA & TOOLBAR (Trading Style) === */
 /* ---------------------------------------------------- */
-
-/* Hacemos que la tarjeta contenedora del gráfico sea invisible */
 #chart-card-container {
     background-color: transparent !important;
     border: none !important;
@@ -169,124 +186,102 @@ body {
 
 .chart-card-content {
     position: relative;
-    padding: 0; /* Eliminamos el padding para que el gráfico ocupe más espacio */
+    padding: 0;
 }
 
-/* ELIMINAMOS EL BORDE Y SOMBRA DEL GRAFICO INTERNO */
+/* Barra de herramientas superior */
+.chart-toolbar {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 5px;
+    padding: 10px 15px 0 15px;
+    margin-bottom: -10px;
+    position: relative;
+    z-index: 10;
+}
+
+.time-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #8892b0;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+}
+
+.time-btn:hover {
+    color: var(--color-text-main);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.time-btn.active {
+    color: var(--color-bg-main);
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    border-color: var(--color-accent-primary);
+}
+
 #plotly-graph {
     width: 100%;
     height: 60vh; 
-    min-height: 450px; /* Altura mínima para PC/Tablet */
-    border: none !important; /* BORDE ELIMINADO */
-    box-shadow: none !important; /* SOMBRA ELIMINADA */
-    border-radius: 0 !important; /* BORDE REDONDEADO ELIMINADO */
+    min-height: 450px; 
+    border: none !important; 
+    box-shadow: none !important; 
 }
 
-.toggle-container {
-    position: absolute; 
-    /* Ajustado para flotar sobre el área del gráfico */
-    top: 10px; 
-    right: 10px;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: 10px; 
-    padding: 6px 12px;
-    background-color: #0b1a33;
-    border: 2px solid var(--color-accent-primary); 
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    border-radius: 4px;
-}
-
-/* Línea de estado del terminal */
 #status-line {
-    border-bottom: none !important; /* LÍNEA PUNTEADA ELIMINADA */
+    border-bottom: none !important; 
     padding-bottom: 10px;
     margin-top: 5px;
-    font-size: 1rem !important;
+    font-size: 0.85rem !important;
     font-weight: 700 !important;
-}
-
-/* Resto de estilos de formulario y switch (sin cambios) */
-.toggle-label {
-    font-size: 0.9rem;
-    letter-spacing: 1.5px;
-}
-
-.switch { position: relative; display: inline-block; width: 50px; height: 26px; } 
-.switch input { opacity: 0; width: 0; height: 0; }
-
-.slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
-    background-color: #112240; 
-    border: 2px solid var(--color-accent-primary); 
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute; content: "";
-    height: 16px; width: 16px; left: 4px; bottom: 4px; 
-    background-color: var(--color-accent-primary);
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider { 
-    background-color: #081223; 
-    border-color: #ccd6f6; 
-}
-
-input:checked + .slider:before {
-    transform: translateX(20px); 
-}
-
-.form-label {
-    color: var(--color-accent-primary);
-    font-size: 0.95rem; 
-    letter-spacing: 2px;
-    font-weight: 700;
-    text-align: center;
-    display: block; /* Asegura que tome el ancho completo para centrar */
-}
-
-.form-select {
-    border-radius: 3px;
-    background-color: #05142a; 
-    color: var(--color-text-main);
-    border: 1px solid var(--color-border-line);
-    font-size: 1rem; 
-}
-
-.form-select:focus {
-    border-color: var(--color-accent-primary);
-    box-shadow: 0 0 0 0.15rem rgba(255, 215, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.5);
+    opacity: 0.8;
 }
 
 /* ---------------------------------------------------- */
-/* === AJUSTES RESPONSIVOS (PARA MÓVILES) === */
+/* === FOOTER AUTHOR === */
+/* ---------------------------------------------------- */
+.footer-author {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2rem;
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.github-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--color-accent-primary);
+    transition: transform 0.3s, box-shadow 0.3s;
+    vertical-align: middle;
+}
+
+.github-avatar:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px var(--color-accent-primary);
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------- */
+/* === RESPONSIVE === */
 /* ---------------------------------------------------- */
 @media (max-width: 767.98px) {
-    /* Optimizar el padding general en pantallas pequeñas */
-    .main-content-wrapper {
-        padding: var(--spacing-unit) 15px; /* Reducir el padding lateral */
-    }
-
-    /* Reducir el tamaño del valor KPI para que quepa mejor */
-    .kpi-value-rect {
-        font-size: 2.5rem; /* De 3rem a 2.5rem */
-    }
-
-    /* Reducir el espaciado entre letras del título principal para que quepa mejor en ancho */
-    .cyber-title h1 {
-        letter-spacing: 5px; 
-    }
-
-    /* AJUSTE CRÍTICO PARA LA PANTALLA MÓVIL (Gráfico) */
-    #plotly-graph {
-        min-height: 300px; /* Reducido de 450px a 300px en móvil */
-    }
+    .main-content-wrapper { padding: var(--spacing-unit) 15px; }
+    .kpi-value-rect { font-size: 2.5rem; }
+    .cyber-title h1 { letter-spacing: 5px; }
+    #plotly-graph { min-height: 300px; }
+    .chart-toolbar { justify-content: center; flex-wrap: wrap; }
 }
 </style>
 </head>
@@ -299,8 +294,7 @@ input:checked + .slider:before {
     </header>
 
     <div class="row g-3 mb-3 justify-content-center">
-
-        <div class="col-12 col-md-5 col-lg-4">
+        <div class="col-12 col-md-6">
             <div class="card control-card">
                 <label for="agente-select" class="form-label">AGENTE</label>
                 <select id="agente-select" class="form-select">
@@ -309,7 +303,7 @@ input:checked + .slider:before {
             </div>
         </div>
 
-        <div class="col-12 col-md-5 col-lg-4">
+        <div class="col-12 col-md-6">
             <div class="card control-card">
                 <label for="accion-select" class="form-label">ACCIÓN</label>
                 <select id="accion-select" class="form-select">
@@ -326,7 +320,6 @@ input:checked + .slider:before {
                 </select>
             </div>
         </div>
-
     </div>
 
     <div id="kpi-container" class="row mb-3 g-3"> 
@@ -334,376 +327,151 @@ input:checked + .slider:before {
 
     <div id="chart-card-container" class="card mb-5"> 
         <div class="chart-card-content">
-
-            <div class="toggle-container">
-                <span class="toggle-label" style="color:var(--color-text-secondary);">MENSUAL</span>
-
-                <label class="switch">
-                    <input type="checkbox" id="mini-toggle-view">
-                    <span class="slider"></span>
-                </label>
-
-                <span class="toggle-label" style="color:var(--color-accent-primary);">DIARIO</span>
+            
+            <div class="chart-toolbar">
+                <button class="time-btn" data-period="7">7 D</button>
+                <button class="time-btn" data-period="15">15 D</button>
+                <button class="time-btn" data-period="30">30 D</button>
+                <button class="time-btn active" data-period="MENSUAL">HISTÓRICO</button>
             </div>
 
-            <div id="status-line" class="text-center" style="color:var(--color-accent-primary); font-family: 'Rajdhani', sans-serif;">// INICIALIZANDO INTERFAZ Y REQUIRIENDO DATOS...</div>
+            <div id="status-line" class="text-center" style="color:var(--color-accent-primary); font-family: 'Rajdhani', sans-serif;">
+                // INICIALIZANDO INTERFAZ Y REQUIRIENDO DATOS...
+            </div>
+            
             <div id="plotly-graph"></div>
         </div>
     </div>
 
-
-    <footer class="footer-text mt-4 text-center" style="color:var(--color-text-secondary); font-size: 0.8rem; font-family: 'Rajdhani', sans-serif;">
-        [SYSTEM STATUS OK] :: DATALINK STABLE. :: OPERATION WARNER V8.2 ONLINE.
+    <footer class="footer-author">
+        CREATED BY 
+        <a href="https://github.com/PLGordilloVera" target="_blank" title="Ver perfil de GitHub">
+            <img src="https://github.com/PLGordilloVera.png" alt="Autor" class="github-avatar" />
+        </a>
     </footer>
 
 </div>
 
 <script>
 /* =================================================================================
-    LÓGICA DEL DASHBOARD 
-    ================================================================================= */
+   LÓGICA DEL DASHBOARD
+   ================================================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyFMsw7uxn-kvxn4wHOVLKjSijRhRk5YtzNpcspEdNjWFjoq71Jf2VZ193Sz_pjL-mK/exec";
 
-// Reemplaza esta URL con la URL de tu API de Apps Script DESPLEGADA y con permisos "Cualquier persona"
-// ⚠️ ¡IMPORTANTE! Revisa que esta URL sea la de tu Script desplegado.
-const API_URL = "https://script.google.com/macros/s/AKfycbwyiN4vkT65DACYzcSmXesnBtY5cLpEcFcjCSGxOT_uF94JNAzgef3f9OsEkrtrEVyD/exec";
 const STATUS_LINE = document.getElementById("status-line");
 const AGENTE_SELECT = document.getElementById("agente-select");
 const ACCION_SELECT = document.getElementById("accion-select");
 const KPI_CONTAINER = document.getElementById("kpi-container");
 const PLOTLY_GRAPH_ID = "plotly-graph";
-
+const TIME_BUTTONS = document.querySelectorAll('.time-btn');
 const MESES_CORTOS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
 
-let DATA = [];
-let INDICES = {};
-let AGENTES = [];
+let DATA = [], INDICES = {}, AGENTES = [];
+let agenteActual = "TODOS", accionActual = "CAPTACIONES", periodoActual = "MENSUAL";
 
-let vistaActual = "mensual";
-let agenteActual = "TODOS";
-// Asegurarse de que el valor inicial coincida con una opción válida (se ha cambiado a la primera en la lista ordenada)
-let accionActual = "CAPTACIONES"; 
-
-/* --- Utilidades --- */
 const pad2 = (n) => String(n).padStart(2, '0');
-
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-function filterForAgentAndAction(i, agente, accion) {
-    // La clave es que i.accion debe coincidir exactamente con `accion` ("CLIENTES VENDEDORES" o "CARTELES INSTALADOS")
-    return (agente === "TODOS" || i.agente === agente) && i.accion === accion;
-}
+const debounce = (func, delay) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => func.apply(this, a), delay); }; };
 
 function aggregateSum(items, keyExtractor) {
     const map = new Map();
-    items.forEach(i => {
-        const k = keyExtractor(i);
-        const cantidad = +i.cantidad || 0;
-        map.set(k, (map.get(k) || 0) + cantidad);
-    });
+    items.forEach(i => { const k = keyExtractor(i); map.set(k, (map.get(k) || 0) + (+i.cantidad || 0)); });
     return Array.from(map.entries()).map(([x, y]) => ({ x, y }));
 }
 
-/* --- Cargar datos --- */
+function formatDateISO(d) {
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+}
+
 async function cargarDatos() {
-    STATUS_LINE.innerText = "// CONECTANDO A BASE DE DATOS E INICIANDO STREAM...";
+    STATUS_LINE.innerText = "// CONECTANDO A BASE DE DATOS...";
     try {
         const r = await fetch(API_URL);
-        
-        if (!r.ok) {
-            console.error("Error al obtener datos del API. Código HTTP:", r.status, r.statusText);
-            throw new Error(`Error en el API (HTTP ${r.status}).`);
-        }
-        
+        if (!r.ok) throw new Error(`Error HTTP ${r.status}`);
         const j = await r.json();
-
-        DATA = j.evolucion_data || [];
-        INDICES = j.indices_anuales || {};
+        DATA = j.evolucion_data || []; INDICES = j.indices_anuales || {};
         AGENTES = j.agentes_activos || [];
-
-        // 1. Ordenar la lista de agentes alfabéticamente
         AGENTES.sort((a, b) => a.localeCompare(b));
-        
-        // 2. Agregar "TODOS" al inicio (si no existe) y asegurarnos que quede primero
-        const todosIndex = AGENTES.indexOf("TODOS");
-        if (todosIndex > -1) {
-            AGENTES.splice(todosIndex, 1);
-        }
+        if(AGENTES.includes("TODOS")) AGENTES.splice(AGENTES.indexOf("TODOS"), 1);
         AGENTES.unshift("TODOS");
-        
-        // 3. Renderizar las opciones ordenadas
         AGENTE_SELECT.innerHTML = AGENTES.map(a => `<option value="${a}">${a}</option>`).join("");
-        
-        STATUS_LINE.innerText = "// STREAM ESTABLECIDO. DATOS OK."; 
-        
-        renderKPIs();
-        renderChart();
+        STATUS_LINE.innerText = "// DATOS RECIBIDOS. SISTEMA ONLINE."; 
+        renderKPIs(); renderChart();
     } catch (e) {
-        console.error("Error al cargar datos. Verifique la URL y permisos:", e);
-        let errorMsg = `// ERROR CRÍTICO DE CONEXIÓN. REVISAR API_URL.`;
-        if (e.message && e.message.includes('Failed to fetch')) {
-             errorMsg = `// ERROR DE RED: API NO ACCESIBLE.`;
-        } else if (e.message) {
-            errorMsg = `// ERROR DEL API: ${e.message}.`;
-        }
-        STATUS_LINE.innerText = errorMsg;
+        console.error("Error:", e);
+        STATUS_LINE.innerText = `// ERROR CRÍTICO: ${e.message}`;
+        STATUS_LINE.style.color = "var(--color-accent-danger)";
     }
 }
 
-/* --- Lógica de obtención de series (Mantenida) --- */
-function getDailyRecordsOnly(agente, accion) {
-    return DATA.filter(i =>
-        filterForAgentAndAction(i, agente, accion) &&
-        i.fecha_diaria !== null 
-    );
-}
-
-function getMonthlySeries(agente, accion) {
-    const T = new Date();
-    const Y = T.getFullYear();
-    const M = T.getMonth() + 1;
-
+function getMonthlySeries(ag, ac) {
+    const T = new Date(), Y = T.getFullYear(), M = T.getMonth() + 1;
     const months = Array.from({ length: M }, (_, i) => `${Y}-${pad2(i + 1)}`);
-
-    const dailyRecords = getDailyRecordsOnly(agente, accion);
-    
-    const filteredForMonth = dailyRecords.map(d => {
-        const key = d.fecha_mensual;
-        return { ...d, key };
-    }).filter(Boolean);
-
-    const agg = aggregateSum(filteredForMonth, i => i.key);
-
-    return months.map(m => {
-        const found = agg.find(a => a.x === m);
-        return { x: `${m}-01`, y: found ? found.y : 0 };
-    });
+    const recs = DATA.filter(i => (ag==="TODOS"||i.agente===ag) && i.accion===ac && i.fecha_mensual!==null && i.fecha_diaria===null);
+    const agg = aggregateSum(recs, i => i.fecha_mensual);
+    return months.map(m => { const f = agg.find(a => a.x === m); return { x: `${m}-01`, y: f ? f.y : 0 }; });
 }
 
-function getDailySeries(agente, accion) {
-    const T = new Date();
-    const Y = T.getFullYear();
-    const M = pad2(T.getMonth() + 1);
-    const D = T.getDate();
-
-    const days = Array.from({ length: D }, (_, i) => `${Y}-${M}-${pad2(i + 1)}`);
-    const currentMonthKey = `${Y}-${M}`;
-
-    const dailyRecords = getDailyRecordsOnly(agente, accion);
-
-    const filteredForDay = dailyRecords.filter(i => 
-        i.fecha_mensual === currentMonthKey
-    );
-    
-    const agg = aggregateSum(filteredForDay, i => i.fecha_diaria); 
-
-    return days.map(d => {
-        const found = agg.find(x => x.x === d);
-        return { x: d, y: found ? found.y : 0 }; 
-    });
+function getLastDaysSeries(ag, ac, daysBack) {
+    const days = [];
+    for (let i = daysBack - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push(formatDateISO(d)); }
+    const recs = DATA.filter(i => (ag==="TODOS"||i.agente===ag) && i.accion===ac && i.fecha_diaria!==null && days.includes(i.fecha_diaria));
+    const agg = aggregateSum(recs, i => i.fecha_diaria); 
+    return days.map(d => { const f = agg.find(x => x.x === d); return { x: d, y: f ? f.y : 0 }; });
 }
-
-
-/* --- Renderizado --- */
 
 function renderChart() {
-    STATUS_LINE.innerText = "// RENDERIZANDO GRÁFICO DE EVOLUCIÓN...";
-    
-    const serie = vistaActual === "mensual"
-                             ? getMonthlySeries(agenteActual, accionActual)
-                             : getDailySeries(agenteActual, accionActual);
-
-    const x = serie.map(s => s.x);
-    const y = serie.map(s => s.y);
-    
-    const isMonthly = vistaActual === "mensual";
-    
-    let customTickText = [];
-    if (isMonthly) {
-        customTickText = x.map(dateStr => {
-            const parts = dateStr.split('-');
-            const monthIndex = parseInt(parts[1], 10) - 1;
-            // Retorna el mes abreviado y en MAYÚSCULAS para las marcas del eje y para el 'text'
-            return MESES_CORTOS[monthIndex] || parts[1]; 
-        });
+    if(!DATA.length) return;
+    STATUS_LINE.innerText = `// VISTA: ${periodoActual==='MENSUAL'?'HISTÓRICO':periodoActual+' DÍAS'} | ACCIÓN: ${accionActual}`;
+    let serie = [], customTickText = [];
+    if (periodoActual === "MENSUAL") {
+        serie = getMonthlySeries(agenteActual, accionActual);
+        customTickText = serie.map(s => { if(!s.x)return""; const p=s.x.split('-'); return MESES_CORTOS[parseInt(p[1],10)-1]||p[1]; });
     } else {
-        customTickText = x.map(dateStr => {
-            const parts = dateStr.split('-');
-            // Retorna el día del mes
-            return parts[2]; 
-        });
+        serie = getLastDaysSeries(agenteActual, accionActual, parseInt(periodoActual, 10));
+        customTickText = serie.map(s => s.x ? s.x.split('-')[2] : "");
     }
-    
-    // CONFIGURACIÓN MEJORADA DEL TOOLTIP PARA ALTO CONTRASTE Y EFECTO DIGITAL
-    const hoverLabelConfig = {
-        bgcolor: '#0A192F', 
-        bordercolor: '#FFD700', 
-        font: {
-            color: '#ccd6f6', 
-            family: 'Orbitron, sans-serif', 
-            size: 14
-        },
-        namelength: 0 
-    };
-
-    // PLANTILLA PARA CONTROLAR EL CONTENIDO DEL TOOLTIP
-    // Usamos %{text} para asegurar que se muestre el mes/día en mayúsculas/normal
-    const hoverTemplate = "<b>%{text}</b>, %{y}<extra></extra>";
+    const x = serie.map(s => s.x), y = serie.map(s => s.y);
     
     const data = [
-        {
-            x, y, 
-            // Usamos customTickText como la fuente de texto para el tooltip
-            text: customTickText,
-            type: "bar",
-            name: "Conteo",
-            hovertemplate: hoverTemplate, 
-            hoverlabel: hoverLabelConfig, 
-            marker: { 
-                color: "rgba(255, 215, 0, 0.7)", 
-                line: {
-                    color: "rgba(255, 215, 0, 1)",
-                    width: 1
-                }
-            } 
-        },
-        {
-            x, y, 
-            // Usamos customTickText como la fuente de texto para el tooltip
-            text: customTickText,
-            type: "scatter", 
-            mode: "lines+markers", 
-            name: "Tendencia",
-            hovertemplate: hoverTemplate, 
-            hoverlabel: hoverLabelConfig, 
-            line: { color: "#ccd6f6", width: 3 }, 
-            marker: { 
-                color: "#0A192F", 
-                size: 10, 
-                line: {
-                    color: "#FFD700", 
-                    width: 2
-                }
-            }
-        }
+        { x, y, text: customTickText, type: "bar", hovertemplate: "<b>%{text}</b>: %{y}<extra></extra>", marker: { color: "rgba(255, 215, 0, 0.7)", line: { color: "rgba(255, 215, 0, 1)", width: 1 } } },
+        { x, y, text: customTickText, type: "scatter", mode: "lines+markers", hovertemplate: "<b>%{text}</b>: %{y}<extra></extra>", line: { color: "#ccd6f6", width: 3 }, marker: { color: "#0A192F", size: 8, line: { color: "#FFD700", width: 2 } } }
     ];
-
     const layout = {
-        title: {
-            text: `EVOLUCIÓN DE ${accionActual} [UNIDAD: ${agenteActual}]`,
-            font: {
-                color: '#ccd6f6',
-                family: 'Rajdhani, sans-serif',
-                size: 20
-            },
-            y: 0.95,
-            x: 0.02,
-            xref: 'paper',
-            xanchor: 'auto'
-        },
-        xaxis: {
-            tickangle: 0, 
-            color: "#8892b0", 
-            tickmode: 'array',
-            tickvals: x,
-            // Las etiquetas de los ticks usan customTickText (ENE, FEB, etc. o días)
-            ticktext: customTickText,
-            gridcolor: "rgba(136, 146, 176, 0.15)", 
-            linecolor: "#8892b0",
-            zerolinecolor: "#8892b0",
-            range: isMonthly ? null : [x[0], x[x.length - 1]], // Ajuste de rango para diario
-            dtick: isMonthly ? null : 1,
-            automargin: true 
-        },
-        yaxis: {
-            color: "#8892b0", 
-            gridcolor: "rgba(136, 146, 176, 0.15)",
-            linecolor: "#8892b0",
-            zerolinecolor: "#8892b0",
-            rangemode: 'tozero', // Empezar en cero
-            automargin: true 
-        },
-        // PROPIEDADES CLAVE PARA LA TRANSPARENCIA TOTAL
-        plot_bgcolor: "transparent", 
-        paper_bgcolor: "transparent",
-        // FIN PROPIEDADES CLAVE
-        margin: { t: 50, b: 50, l: 50, r: 20 }, 
-        showlegend: false
+        title: { text: `${accionActual} [${agenteActual}]`, font: { color: '#ccd6f6', family: 'Rajdhani', size: 18 }, y: 0.95, x: 0.05, xanchor: 'left' },
+        xaxis: { tickangle: 0, color: "#8892b0", tickmode: 'array', tickvals: x, ticktext: customTickText, gridcolor: "rgba(136, 146, 176, 0.15)", linecolor: "#8892b0", fixedrange: true },
+        yaxis: { color: "#8892b0", gridcolor: "rgba(136, 146, 176, 0.15)", linecolor: "#8892b0", rangemode: 'tozero', fixedrange: true },
+        plot_bgcolor: "transparent", paper_bgcolor: "transparent", margin: { t: 60, b: 40, l: 40, r: 20 }, showlegend: false, dragmode: false 
     };
-
     Plotly.newPlot(PLOTLY_GRAPH_ID, data, layout, { responsive: true, displayModeBar: false });
-    
-    STATUS_LINE.innerText = "// RENDERING COMPLETE. INITIATING ANALYSIS."; 
 }
 
 function renderKPIs() {
-    KPI_CONTAINER.innerHTML = "";
-    
-    // Títulos actualizados para reflejar el cambio y ser más descriptivos
-    const titles = [
-        "CONVERSIÓN VISITAS",
-        "CONVERSIÓN RESERVAS",
-        "CONVERSIÓN VALUACIONES"
-    ];
-
-    let vals = ["—", "—", "—"];
-
+    let vals = [0,0,0], esPromedio = false;
     if (agenteActual !== "TODOS") {
         const k = INDICES[agenteActual] || {};
-        vals = [
-            k.Efectividad_Visitas,
-            k.Efectividad_Reservas,
-            k.Efectividad_Valuaciones
-        ];
+        vals = [k.Efectividad_Visitas||0, k.Efectividad_Reservas||0, k.Efectividad_Valuaciones||0];
+    } else {
+        const keys = Object.keys(INDICES);
+        if (keys.length) {
+            let sV=0,sR=0,sVa=0,c=0;
+            keys.forEach(a => { if(INDICES[a]){ sV+=INDICES[a].Efectividad_Visitas||0; sR+=INDICES[a].Efectividad_Reservas||0; sVa+=INDICES[a].Efectividad_Valuaciones||0; c++; } });
+            if(c>0) { vals = [sV/c, sR/c, sVa/c]; esPromedio = true; }
+        }
     }
-
-    vals.forEach((v, i) => {
-        const displayValue = typeof v === "number" ? `${(v * 100).toFixed(1)}%` : "N/A";
-        
-        KPI_CONTAINER.innerHTML += `
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="kpi-card-rect">
-                <div class="kpi-title-rect">${titles[i]}</div>
-                <div class="kpi-value-rect">${displayValue}</div>
-            </div>
-        </div>`;
-    });
+    const titles = ["CONV. VISITAS", "CONV. RESERVAS", "CONV. VALUACIONES"];
+    KPI_CONTAINER.innerHTML = vals.map((v, i) => {
+        let col = v < 0.05 ? "var(--color-accent-danger)" : (v > 0.15 ? "var(--color-accent-success)" : "var(--color-accent-primary)");
+        return `<div class="col-12 col-md-6 col-lg-4"><div class="kpi-card-rect"><div class="kpi-title-rect">${titles[i]}</div><div class="kpi-value-rect" style="color: ${col}">${(v*100).toFixed(1)}% ${esPromedio?"<small style='font-size:0.4em;opacity:0.6'>(AVG)</small>":""}</div></div></div>`;
+    }).join("");
 }
 
-/* --- Eventos --- */
 document.addEventListener("DOMContentLoaded", () => {
     cargarDatos();
-
-    document.getElementById("mini-toggle-view").addEventListener("change", (e) => {
-        vistaActual = e.target.checked ? "diario" : "mensual";
-        renderChart();
-    });
-
-    AGENTE_SELECT.addEventListener("change", (e) => {
-        agenteActual = e.target.value;
-        renderKPIs(); 
-        renderChart();
-    });
-
-    ACCION_SELECT.addEventListener("change", (e) => {
-        accionActual = e.target.value;
-        renderChart();
-    });
-
-    const debouncedResize = debounce(() => {
-        // Redibujar Plotly en resize para asegurar la responsividad
-        Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
-    }, 250);
-
-    window.addEventListener('resize', debouncedResize);
+    AGENTE_SELECT.addEventListener("change", (e) => { agenteActual = e.target.value; renderKPIs(); renderChart(); });
+    ACCION_SELECT.addEventListener("change", (e) => { accionActual = e.target.value; renderChart(); });
+    TIME_BUTTONS.forEach(btn => btn.addEventListener('click', (e) => { TIME_BUTTONS.forEach(b => b.classList.remove('active')); e.target.classList.add('active'); periodoActual = e.target.dataset.period; renderChart(); }));
+    window.addEventListener('resize', debounce(() => Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true }), 200));
 });
-
 </script>
-
 </body>
 </html>
