@@ -5,409 +5,373 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Control - Warner Bienes Raíces</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warner: {
+                            blue: '#0f172a', 
+                            dark: '#020617', 
+                            gold: '#eed254',     
+                            goldHover: '#d4b93a' 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* AJUSTES GLOBALES PARA MÁXIMO RENDIMIENTO Y ALTURA */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            font-family: 'Inter', sans-serif;
-            background-color: #0F172A; 
-            color: #e5e7eb;
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
         }
 
-        /* Estructura del Layout usando Grid para Sidebar y Main */
-        .app-layout {
+        .layout-grid {
             display: grid;
-            grid-template-columns: 16rem 1fr; /* Sidebar ancho normal */
-            min-height: 100%; 
-            transition: grid-template-columns 0.3s ease; /* Transición suave del ancho de la barra */
+            grid-template-columns: 260px 1fr;
+            transition: grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100vh;
+            overflow: hidden;
         }
-        
-        /* ESTADO COLAPSADO: El área del grid del sidebar se hace 0 */
-        .app-layout.collapsed {
-            grid-template-columns: 0rem 1fr; /* Ancho 0 para la columna del sidebar */
-        }
-        
-        /* Ajustes del Sidebar (ASIDE) para el deslizamiento */
+
+        .layout-grid.collapsed { grid-template-columns: 0px 1fr; }
+
         aside {
-            /* Usamos 'fixed' o 'absolute' para que el sidebar no sea manejado por el grid en el estado colapsado */
-            position: fixed; /* Mantenemos 'fixed' para que se deslice sobre el contenido principal */
-            top: 0;
-            left: 0;
-            width: 16rem; /* Mantenemos el ancho real para el deslizamiento */
-            z-index: 50; 
-            height: 100%;
-            transition: transform 0.3s ease, left 0.3s ease; /* Transición de posición para el deslizamiento */
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4); /* Añadir sombra para efecto de panel */
-        }
-
-        /* ESTADO COLAPSADO: Mover el sidebar completamente fuera de la pantalla a la izquierda */
-        .app-layout.collapsed aside {
-            /* Mueve la barra lateral completamente a la izquierda, ocultándola */
-            transform: translateX(-100%);
-            box-shadow: none;
-        }
-
-        /* Botón de Toggle/Ocultar: Lo posicionamos en relación al 'body' o 'app-layout' */
-        #sidebar-toggle {
-            position: fixed; /* Fijo para que esté siempre en el borde del contenido */
-            top: 1.5rem; /* 6 en Tailwind */
-            left: 14.5rem; /* 16rem - 1.5rem (aprox el radio del botón) */
-            z-index: 100; /* Debe estar por encima del sidebar y el contenido */
-            transition: left 0.3s ease, transform 0.3s ease;
-        }
-
-        /* ESTADO COLAPSADO: Mover el botón de toggle a la izquierda */
-        .app-layout.collapsed #sidebar-toggle {
-            left: 1.5rem; /* Se mueve a la posición inicial (visible) */
-            transform: rotate(180deg); /* Rota la flecha para indicar expansión */
-        }
-
-
-        /* El resto de estilos se mantienen o simplifican */
-
-        .content-area {
-            /* Usamos la segunda columna del grid */
-            grid-column: 2 / 3; 
-            height: 100%; 
-            padding: 2rem 1rem; 
-            display: flex; 
-            flex-direction: column;
-            gap: 0; 
-            overflow-y: auto; 
-            max-width: 100%;
-        }
-        
-        /* Contenido visible (título y botones) ya no necesita opacidad, solo se desliza con el ASIDE */
-        .sidebar-visible-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            width: 260px;
             overflow: hidden;
+            white-space: nowrap;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg, #0F172A 0%, #020617 100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Ajuste para que los botones colapsados sigan mostrando el icono (aunque esto es redundante con el nuevo método) */
-        .app-layout.collapsed .nav-button span {
-             display: inline; /* Aseguramos que se muestre el texto al expandir */
-        }
-        
-        .nav-button {
-            transition: background-color 0.1s ease;
-        }
-        
-        .full-content-height {
-             height: 100%; 
-             flex-grow: 1; 
-             box-sizing: border-box; 
+        .layout-grid.collapsed aside { transform: translateX(-100%); }
+
+        .loader {
+            border: 4px solid #1e293b;
+            border-top: 4px solid #eed254;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
         }
 
-        .nav-button.active {
-            background-color: #1e3a8a; 
-            color: #ffffff;
-            font-weight: 600;
-            border-left: 4px solid #F59E0B; 
-        }
-        
-        .warner-logo-text {
-            color: #F59E0B; 
-        }
-        
-        .section {
-            background-color: #ffffff;
-            color: #1f2937; 
-            padding: 2.5rem; 
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            flex-grow: 1;
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .iframe-section-style {
-            background-color: #111827; 
-            padding: 0; 
-            box-shadow: none; 
-            display: flex; 
-            flex-direction: column;
-            border-radius: 0.5rem; 
-            overflow: hidden; 
-        }
-        
-        .iframe-container {
-            flex-grow: 1; 
-            overflow: hidden;
-            height: 100%; 
-        }
-        
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            transform-origin: top left;
-            --scale-factor: 1.0; 
-            transform: scale(var(--scale-factor)); 
-            width: calc(100% / var(--scale-factor)); 
-            height: calc(100% / var(--scale-factor)); 
-        }
-
-        #competencias-warner-section .iframe-container iframe {
-            --scale-factor: 0.70; 
-        }
-        
-        #map-section .iframe-container iframe {
-             transform: none;
-             width: 100%;
-             height: 100%;
-        }
-        
-        #agente-del-mes-section .iframe-container iframe {
-             --scale-factor: 1.0; 
-        }
-        
-        /* APLICAMOS EL FACTOR DE ESCALA AL NUEVO IFRAME SI ES NECESARIO */
-        #rendimiento-section .iframe-container iframe {
-             --scale-factor: 1.0; /* Ajusta este valor si el contenido de rendimiento.html es demasiado grande o pequeño */
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(238, 210, 84, 0.15);
+            border-color: rgba(238, 210, 84, 0.5);
         }
     </style>
 </head>
 
-<body>
-    <div class="app-layout" id="app-layout">
+<body class="bg-slate-950 text-slate-200 antialiased overflow-hidden">
+
+    <div id="app-layout" class="layout-grid">
         
-        <aside class="bg-blue-900 text-white shadow-2xl z-50">
-            <div class="sidebar-visible-content">
-                <div class="p-6 border-b border-blue-800 sidebar-header">
-                    <h1 class="text-xl font-extrabold whitespace-nowrap">
-                        <span class="warner-logo-text">WARNER</span> PANEL
-                    </h1>
-                    <p class="text-sm text-blue-300 whitespace-nowrap">Herramientas de gestión</p>
+        <aside class="flex flex-col relative z-20 shadow-2xl">
+            <div class="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-900/50">
+                <i class="ph-fill ph-film-strip text-warner-gold text-2xl mr-2"></i>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide text-white">WARNER <span class="text-warner-gold">PANEL</span></h1>
                 </div>
-                
-                <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                    
-                    <hr class="border-blue-800 my-2">
-                    
-                    <button data-target="database-section" class="nav-button active w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        📂 <span class="ml-3 whitespace-nowrap">Bases de Datos</span>
-                    </button>
-                    
-                    <button data-target="rendimiento-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        📈 <span class="ml-3 whitespace-nowrap">Rendimiento Agentes</span>
-                    </button>
-                    
-                    <button data-target="agente-del-mes-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        🏆 <span class="ml-3 whitespace-nowrap">Agente del Mes</span>
-                    </button>
-                    
-                    <button data-target="competencias-warner-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        🎮 <span class="ml-3 whitespace-nowrap">Competencias Warner</span>
-                    </button>
-                    
-                    <button data-target="forms-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        📝 <span class="ml-3 whitespace-nowrap">Registros / Formularios</span>
-                    </button>
-
-                    <button data-target="map-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        🗺️ <span class="ml-3 whitespace-nowrap">Mapa de Inmuebles</span>
-                    </button>
-                    
-                    <button data-target="procedimientos-section" class="nav-button w-full text-left flex items-center p-3 rounded-lg hover:bg-blue-800">
-                        📚 <span class="ml-3 whitespace-nowrap">Procedimientos</span>
-                    </button>
-
-                </nav>
             </div>
+
+            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Herramientas</p>
+
+                <button onclick="navigate('forms-section')" class="nav-item active bg-slate-800 text-white w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-clipboard-text text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Registros / Formularios
+                </button>
+
+                <button onclick="navigate('procedimientos-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-book-open text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Procedimientos
+                </button>
+
+                <button onclick="navigate('database-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-database text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Bases de Datos
+                </button>
+                
+                <button onclick="navigate('rendimiento-section', 'rendimiento.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-chart-line-up text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Rendimiento
+                </button>
+
+                <button onclick="navigate('map-section', 'https://mapawarner-gfm7yydt6t5pg2k3qfjmwb.streamlit.app/?embed=true')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-map-trifold text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Mapa Inmuebles
+                </button>
+
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Comunidad</p>
+
+                <button onclick="navigate('agente-del-mes-section', 'AGENTEDELMES.HTML')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-trophy text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Agente del Mes
+                </button>
+
+                <button onclick="navigate('competencias-warner-section', 'https://plgordillovera.github.io/warnerjuegos/index.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                    <i class="ph ph-game-controller text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    Competencias
+                </button>
+            </nav>
         </aside>
-        <button id="sidebar-toggle" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full shadow-lg focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
 
-        <main class="content-area">
-            <section id="database-section" class="section">
-                <h2 class="text-4xl font-bold mb-8">Bases de Datos (Hojas de Cálculo)</h2>
-                <p class="text-lg text-gray-600 mb-6">Accede a las bases de datos consolidadas de la oficina. Se abrirán en una nueva pestaña.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    
-                    <a href="https://docs.google.com/spreadsheets/d/1Y80pLiAlu7RBZApq6KyOYIHBgCMYPKB76NpjpbhC-7w/edit?resourcekey=&gid=2110786399#gid=2110786399" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CARTERA DE INMUEBLES
-                    </a>
-                    <a href="https://docs.google.com/spreadsheets/d/18pRQM5NbZ0oOqQjFTY_lJD5J6bCWVccZGOuc78-XIWM/edit?gid=545566366#gid=545566366" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CLIENTES
-                    </a>
-                    <a href="https://docs.google.com/spreadsheets/d/1SDUb-IJjsTxbMKj6ZOy1rLxjZRrNO5Eh-vUaWYNFFNs/edit?resourcekey=&gid=42079202#gid=42079202" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        VALUACIÓN
-                    </a>
-                    <a href="https://docs.google.com/spreadsheets/d/1-IUCSxz3Rh9vmajMxunfWEXcVjW2OjkBmtQ_B03Cn7k/edit?gid=206032840#gid=206032840" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        VISITAS
-                    </a>
-                    <a href="https://docs.google.com/spreadsheets/d/12Bi0Hn1FO0Fu5ZHT2c1BqVJKxD-ILEwo07TH0R15wEU/edit?resourcekey=&gid=46106711#gid=46106711" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        PUBLICIDAD
-                    </a>                    
-                    <a href="https://docs.google.com/spreadsheets/d/1y1Ten0vMXceRXGzZELn63msgmtrluJltPnaBfIFWQdg/edit?gid=299938101#gid=299938101" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CARTELES
-                    </a>
-                    <a href="https://docs.google.com/spreadsheets/d/134NRMjC-CJH9Aeipa3D9XE_4XhfLd7nO6b1j-sQfX2U/edit?resourcekey=&gid=302664252#gid=302664252" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        RESEÑAS
-                    </a>
-                    
-                </div>
-            </section>
+        <main class="relative flex flex-col h-full overflow-hidden bg-slate-950">
             
-            <section id="rendimiento-section" 
-                     class="section hidden iframe-section-style full-content-height">
+            <header class="h-16 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md z-10">
+                <button id="sidebar-toggle" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <div class="text-sm text-slate-500">
+                    <span id="current-date"></span>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth relative">
+
+                <section id="forms-section" class="content-section animate-fade-in">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-white mb-2">Formularios de Carga</h2>
+                        <p class="text-slate-400">Ingreso de datos al sistema.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <a href="https://script.google.com/macros/s/AKfycbxbcwVW5TLz0oOj21gLan7ke5O2fXekqnbAkVbgcL2sb_OF6wLJCxCVgeoeqRB1_DWt/exec" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-house text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Cartera Inmuebles</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1tdOzpeJjsD9LIvFIlrcAqCI_lwsjb0l1qM9UrIU4jQs/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-signpost text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Carteles</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1_DyiIEZzDPO9vcnAV6IkAqStyRHdErLH3bn17Ygm2xY/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-user-plus text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Clientes Compradores</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSf9zCOAaictqYr8G4y_Nf1CTz4ufOYJ4x1XJbZZr9vPynwwZQ/viewform" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-user-minus text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Clientes Vendedores</span>
+                        </a>
+
+                        <a href="https://script.google.com/macros/s/AKfycbzyPQPqWyzOJ6QUQaa8LD3sj2f3WgAh2VWuaP7BRmVxjSMlylO6BAAqOUl9YBHG6NcdVA/exec" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-identification-card text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Personal</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1xHEMlOgV-DVXWbA1Z7xl9YkLdJyaAUDnhZkKr9G3iJ8/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-megaphone text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Publicidad</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1UTJ2QJRKPuJNgT75s3caVPr5rqFh37zwk62cj4GrtAg/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-lock-key text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Reservas</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1QDNTUEPd4Ka8Qyy__XYP4CAgK_GOUvekhy0eFPV-r5w/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-star text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Reseñas</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1oNtJ3_JPhN_Hv1Ids4Wa2bRdxItYWQrv3dKTX1AwvPw/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-calculator text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Valuación</span>
+                        </a>
+
+                        <a href="https://docs.google.com/forms/d/1CJvg2n62pieAFFSLxg7SXUURNHv90dVnLZECkR4EoUg/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-calendar-check text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Visita</span>
+                        </a>
+                    </div>
+                </section>
                 
-                <div class="iframe-container"> 
-                    <iframe 
-                        src="rendimiento.html" 
-                        title="Rendimiento Agentes" 
-                        frameborder="0"
-                        allowfullscreen="" 
-                    ></iframe>
-                </div>
-            </section>
+                <section id="database-section" class="content-section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-white mb-2">Bases de Datos</h2>
+                        <p class="text-slate-400">Acceso directo a las hojas de cálculo.</p>
+                    </div>
 
-            <section id="agente-del-mes-section" 
-                     class="section hidden iframe-section-style full-content-height">
-                
-                <div class="iframe-container"> 
-                    <iframe 
-                        src="AGENTEDELMES.HTML" 
-                        title="Agente del Mes" 
-                        frameborder="0"
-                        allowfullscreen="" 
-                    ></iframe>
-                </div>
-            </section>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        
+                        <a href="https://docs.google.com/spreadsheets/d/1Y80pLiAlu7RBZApq6KyOYIHBgCMYPKB76NpjpbhC-7w/edit?resourcekey=&gid=2110786399" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-house text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Cartera Inmuebles</span>
+                        </a>
 
-            <section id="competencias-warner-section" 
-                     class="section hidden iframe-section-style full-content-height">
-                
-                <div class="iframe-container"> 
-                    <iframe 
-                        src="https://plgordillovera.github.io/warnerjuegos/index.html" 
-                        title="Competencias Warner" 
-                        frameborder="0"
-                        allowfullscreen="" 
-                    ></iframe>
-                </div>
-            </section>
-            
-            <section id="forms-section" class="section hidden">
-                <h2 class="text-4xl font-bold mb-8">Registros / Formularios Warner</h2>
-                <p class="text-lg text-gray-600 mb-6">Haz clic en el formulario que deseas llenar. Se abrirá en una nueva pestaña.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    
-                    <a href="https://script.google.com/macros/s/AKfycbxbcwVW5TLz0oOj21gLan7ke5O2fXekqnbAkVbgcL2sb_OF6wLJCxCVgeoeqRB1_DWt/exec" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CARTERA INMUEBLES
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1tdOzpeJjsD9LIvFIlrcAqCI_lwsjb0l1qM9UrIU4jQs/edit" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CARTELES
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1_DyiIEZzDPO9vcnAV6IkAqStyRHdErLH3bn17Ygm2xY/edit?usp=forms_home&ouid=104988288093955459106&ths=true" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CLIENTES COMPRADORES
-                    </a>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf9zCOAaictqYr8G4y_Nf1CTz4ufOYJ4x1XJbZZr9vPynwwZQ/viewform?usp=header" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        CLIENTES VENDEDORES
-                    </a>
-                    <a href="https://script.google.com/macros/s/AKfycbzyPQPqWyzOJ6QUQaa8LD3sj2f3WgAh2VWuaP7BRmVxjSMlylO6BAAqOUl9YBHG6NcdVA/exec" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        PERSONAL
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1xHEMlOgV-DVXWbA1Z7xl9YkLdJyaAUDnhZkKr9G3iJ8/edit" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        PUBLICIDAD
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1UTJ2QJRKPuJNgT75s3caVPr5rqFh37zwk62cj4GrtAg/edit?usp=forms_home&ouid=104988288093955459106&ths=true" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        RESERVAS
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1QDNTUEPd4Ka8Qyy__XYP4CAgK_GOUvekhy0eFPV-r5w/edit" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        RESEÑAS
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1oNtJ3_JPhN_Hv1Ids4Wa2bRdxItYWQrv3dKTX1AwvPw/edit" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        VALUACIÓN
-                    </a>
-                    <a href="https://docs.google.com/forms/d/1CJvg2n62pieAFFSLxg7SXUURNHv90dVnLZECkR4EoUg/edit?pli=1" target="_blank" class="flex items-center justify-center text-center p-4 bg-amber-500 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-amber-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
-                        VISITA
-                    </a>
-                    
-                </div>
-            </section>
+                        <a href="https://docs.google.com/spreadsheets/d/18pRQM5NbZ0oOqQjFTY_lJD5J6bCWVccZGOuc78-XIWM/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-users text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Clientes</span>
+                        </a>
 
-            <section id="map-section" class="section hidden iframe-section-style full-content-height">
-                <div class="iframe-container"> 
-                    <iframe 
-                        src="https://mapawarner-gfm7yydt6t5pg2k3qfjmwb.streamlit.app/?embed=true" 
-                        title="Mapa de Inmuebles" 
-                        frameborder="0"
-                        allowfullscreen="" 
-                    ></iframe>
-                </div>
-            </section>
+                        <a href="https://docs.google.com/spreadsheets/d/1SDUb-IJjsTxbMKj6ZOy1rLxjZRrNO5Eh-vUaWYNFFNs/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-calculator text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Valuación</span>
+                        </a>
+                        
+                        <a href="https://docs.google.com/spreadsheets/d/1-IUCSxz3Rh9vmajMxunfWEXcVjW2OjkBmtQ_B03Cn7k/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-calendar-check text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Visitas</span>
+                        </a>
 
-            <section id="procedimientos-section" class="section hidden">
-                <h2 class="text-4xl font-bold mb-8">Procedimientos y Manuales</h2>
-                <p class="text-lg text-gray-600 mb-6">Accede a las presentaciones detalladas sobre la operación y el flujo de trabajo de la oficina.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    
-                    <a href="https://prezi.com/view/FIdlkdnOFVq5kLpcubLt/?referral_token=1NtU1RlnB3FN" target="_blank" class="flex items-center justify-center text-center p-4 bg-red-600 text-white font-semibold rounded-lg shadow-md transition-all hover:bg-red-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">
-                        VALUACIÓN Y CAPTACIÓN
-                    </a>
-                    
-                </div>
-            </section>
-            
+                        <a href="https://docs.google.com/spreadsheets/d/12Bi0Hn1FO0Fu5ZHT2c1BqVJKxD-ILEwo07TH0R15wEU/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-megaphone text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Publicidad</span>
+                        </a>
+
+                        <a href="https://docs.google.com/spreadsheets/d/1y1Ten0vMXceRXGzZELn63msgmtrluJltPnaBfIFWQdg/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-signpost text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Carteles</span>
+                        </a>
+
+                        <a href="https://docs.google.com/spreadsheets/d/134NRMjC-CJH9Aeipa3D9XE_4XhfLd7nO6b1j-sQfX2U/edit" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
+                            <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
+                                <i class="ph-bold ph-star text-warner-gold"></i>
+                            </div>
+                            <span class="font-medium text-slate-200">Reseñas</span>
+                        </a>
+                    </div>
+                </section>
+
+                <section id="procedimientos-section" class="content-section hidden">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-bold text-white mb-2">Procedimientos</h2>
+                        <p class="text-slate-400">Manuales operativos y flujos de trabajo.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <a href="https://prezi.com/view/FIdlkdnOFVq5kLpcubLt/?referral_token=1NtU1RlnB3FN" target="_blank" class="dashboard-card glass-panel p-6 rounded-xl border border-slate-700 flex flex-col group hover:border-red-600">
+                            <div class="w-12 h-12 rounded-lg bg-red-900/30 flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors">
+                                <i class="ph-fill ph-presentation text-2xl text-white"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">Valuación y Captación</h3>
+                            <p class="text-sm text-slate-400">Presentación Prezi interactiva.</p>
+                        </a>
+                    </div>
+                </section>
+
+                <section id="iframe-viewer" class="content-section hidden h-full flex flex-col">
+                    <div class="flex-1 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 relative">
+                        <div id="iframe-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900 z-10">
+                            <div class="loader mb-4"></div>
+                            <p class="text-sm text-slate-400 animate-pulse">Cargando herramienta...</p>
+                        </div>
+                        <iframe id="main-iframe" src="" class="w-full h-full border-0 opacity-0 transition-opacity duration-500" onload="hideLoader()"></iframe>
+                    </div>
+                </section>
+
+            </div>
         </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navButtons = document.querySelectorAll('.nav-button');
-            const sections = document.querySelectorAll('.section');
-            const appLayout = document.getElementById('app-layout');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
+        const iframeViewer = document.getElementById('iframe-viewer');
+        const mainIframe = document.getElementById('main-iframe');
+        const iframeLoader = document.getElementById('iframe-loader');
+        const navItems = document.querySelectorAll('.nav-item');
+        const layout = document.getElementById('app-layout');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+
+        function navigate(sectionId, iframeSrc = null) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
             
-            // Esta función se encarga de manejar el cambio de sección
-            const handleNavigation = (button) => {
-                const targetId = button.getAttribute('data-target');
-
-                sections.forEach(section => {
-                    section.classList.add('hidden');
-                });
-
-                const targetSection = document.getElementById(targetId);
-                if (targetSection) {
-                    targetSection.classList.remove('hidden');
+            // Actualizar Sidebar
+            navItems.forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+                btn.classList.add('text-slate-300');
+                if(btn.getAttribute('onclick').includes(sectionId)) {
+                    btn.classList.add('bg-slate-800', 'text-white');
+                    btn.classList.remove('text-slate-300');
                 }
-
-                navButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                button.classList.add('active');
-            };
-
-            // Función principal para ocultar/mostrar el sidebar
-            const toggleSidebar = () => {
-                appLayout.classList.toggle('collapsed');
-            };
-
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => handleNavigation(button));
             });
-            
-            // Listener para el botón de toggle
-            sidebarToggle.addEventListener('click', toggleSidebar);
 
-            // Inicializa: Muestra la sección de Bases de Datos
-            const defaultButton = document.querySelector('[data-target="database-section"]');
-            if (defaultButton) {
-                handleNavigation(defaultButton); 
+            if (iframeSrc) {
+                iframeViewer.classList.remove('hidden');
+                iframeViewer.classList.add('flex');
+                
+                iframeLoader.classList.remove('hidden');
+                mainIframe.classList.add('opacity-0');
+
+                if(mainIframe.src !== iframeSrc) {
+                    mainIframe.src = iframeSrc;
+                } else {
+                    hideLoader();
+                }
+            } else {
+                const target = document.getElementById(sectionId);
+                if(target) target.classList.remove('hidden');
             }
-        });
-    </script>
+        }
 
+        function hideLoader() {
+            setTimeout(() => {
+                iframeLoader.classList.add('hidden');
+                mainIframe.classList.remove('opacity-0');
+            }, 500);
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            layout.classList.toggle('collapsed');
+        });
+
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+    </script>
 </body>
 </html>
