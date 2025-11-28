@@ -22,157 +22,171 @@
             box-sizing: border-box;
         }
 
-        /* Clase general para ocultar y luego mostrar con fade-in (3s) */
+        /* --- Canvas de Partículas --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
+        }
+
+        /* --- ANIMACIÓN DE ENTRADA (SOLO AL CARGAR) --- */
+        /* Esta clase maneja la transición suave de 3 segundos */
         .fade-element {
             opacity: 0;
             transition: opacity 3s ease-in-out; 
             width: 100%;
+            z-index: 1;
         }
-        .fade-element.show {
-            opacity: 1;
-        }
+        .fade-element.show { opacity: 1; }
 
-        /* Título principal */
+        /* --- TÍTULO CON EFECTO BRILLO --- */
         #main-title {
-            font-size: 3em; 
+            font-size: 4em; 
             text-transform: uppercase;
             letter-spacing: 5px;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.3);
             line-height: 1.2;
+            
+            background: linear-gradient(to right, #b8860b 20%, #FFFACD 50%, #b8860b 80%);
+            background-size: 200% auto;
+            color: #FFD700;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            animation: shine 4s linear infinite;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         }
 
-        /* Contenedor principal del Agente Actual */
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        /* Contenedor Agente */
         #current-agent-display {
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 40px;
-            max-width: 700px; 
-            width: 90%;
-            transition: opacity 0.5s ease-in-out; 
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            margin-bottom: 40px; max-width: 700px; width: 90%;
+            /* Sin transición aquí para que el cambio manual sea instantáneo */
         }
 
         #image-container {
-            max-width: 450px; /* IMAGEN MÁS GRANDE */
-            border-radius: 8px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            border: 3px solid #FFD700;
+            max-width: 450px; 
+            border-radius: 8px; margin-bottom: 20px;
+            overflow: hidden; border: 1px solid #FFD700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            background-color: #000;
         }
 
-        #agent-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 5px;
-        }
+        #agent-image { width: 100%; height: auto; display: block; border-radius: 5px; }
         
         #agent-name {
-            font-size: 3em;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
-            margin-bottom: 8px;
+            font-size: 4em; text-transform: uppercase;
+            letter-spacing: 4px; margin-bottom: 8px;
+            text-shadow: 0 0 10px #FFD700;
         }
 
         #agent-month {
-            font-size: 1.5em;
-            letter-spacing: 3px;
-            color: #FFD700;
+            font-size: 1.5em; letter-spacing: 3px; color: #FFD700;
         }
 
-        /* Contenedor de Agentes Anteriores */
+        /* Botones Historial */
         #history-section {
-            max-width: 850px; 
-            width: 90%;
-            padding: 10px 0;
-            margin-top: 20px; 
+            max-width: 850px; width: 90%;
+            padding: 10px 0; margin-top: 20px; 
         }
 
         #history-buttons {
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 10px; 
-            justify-content: center;
-            padding: 10px 0;
-            width: 100%;
+            display: flex; flex-wrap: wrap; gap: 10px; 
+            justify-content: center; padding: 10px 0; width: 100%;
         }
 
         .month-button {
-            padding: 10px 18px;
-            font-family: 'Cinzel', serif;
-            font-size: 1em;
-            background-color: transparent;
-            color: #FFD700;
-            border: 1px solid #FFD700;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 10px 18px; font-family: 'Cinzel', serif; font-size: 1em;
+            background-color: rgba(0,0,0,0.3); color: #FFD700;
+            border: 0.5px solid #FFD700; border-radius: 5px;
+            cursor: pointer; transition: all 0.2s ease;
         }
 
-        .month-button:hover,
-        .month-button.active { /* Clase active para destacar el mes actual o seleccionado */
-            background-color: #FFD700;
-            color: #000000;
-            box-shadow: 0 0 10px #FFD700;
+        .month-button:hover, .month-button.active { 
+            background-color: #FFD700; color: #000; box-shadow: 0 0 10px #FFD700;
         }
 
-        /* Botón de Música */
+        /* Música */
         #music-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #FFD700;
-            color: #000000;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 1.5em;
-            cursor: pointer;
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #FFD700; color: #000; border: none;
+            border-radius: 50%; width: 50px; height: 50px;
+            font-size: 1.5em; cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+            z-index: 100; opacity: 0; transition: opacity 1s ease-in-out;
         }
-        #music-button.show {
-            opacity: 1;
-        }
+        #music-button.show { opacity: 1; }
         
-        /* Media Queries para responsividad */
         @media (max-width: 768px) {
-            #main-title { font-size: 2.5em; } 
+            #main-title { font-size: 2.2em; } 
             #image-container { max-width: 260px; } 
-            #agent-name { font-size: 2.5em; }
-            #agent-month { font-size: 1.2em; }
+            #agent-name { font-size: 2em; }
         }
     </style>
 </head>
 <body>
 
+    <canvas id="bg-canvas"></canvas>
+
     <h1 id="main-title" class="fade-element">WARNER BIENES RAICES</h1>
     
     <div id="current-agent-display" class="fade-element">
         <div id="image-container">
-            <img id="agent-image" src="alonso.png" alt="Agente Inmobiliario del Mes">
+            <img id="agent-image" src="alonso.png" alt="Agente">
         </div>
         <div id="agent-name">ALONSO CASTAÑO</div>
-        <div id="agent-month">COTUBRE 2025</div>
+        <div id="agent-month">OCTUBRE 2025</div>
     </div>
 
     <div id="history-section" class="fade-element">
-        <div id="history-buttons">
-            </div>
+        <div id="history-buttons"></div>
     </div>
 
     <button id="music-button" title="Iniciar Música">🎵</button>
-    
     <audio id="background-music" src="MÚSICA DE PELÍCULAS_ GLADIADOR TEMA COMPLETO.mp4" loop preload="auto"></audio>
 
     <script>
+        // --- 1. PARTÍCULAS ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5; this.speedX = (Math.random() * 0.4) - 0.2;
+                this.speedY = (Math.random() * 0.4) - 0.2; this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (Math.random() > 0.98) this.size = Math.random() * 2.5;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 215, 0, ${this.opacity})`;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function initParticles() {
+            particlesArray = []; for (let i = 0; i < 100; i++) particlesArray.push(new Particle());
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles(); animateParticles();
+
+        // --- 2. DATOS ---
         const agentsData = [
             { month: 'OCTUBRE 2025', name: 'ALONSO CASTAÑO', image: 'alonso_escracho.png', order: 10 },
             { month: 'SEPTIEMBRE 2025', name: 'ALONSO CASTAÑO', image: 'alonso_escracho.png', order: 9 },
@@ -185,121 +199,80 @@
             { month: 'FEBRERO 2025', name: 'ANDREA VEDIA', image: 'andrea.png', order: 2 },
             { month: 'ENERO 2025', name: 'MAURO BARRAZA', image: 'mauro.png', order: 1 },
         ];
-
         const currentAgentMonth = 'OCTUBRE 2025';
         
+        // Elementos
         const mainTitle = document.getElementById('main-title');
         const currentAgentDisplay = document.getElementById('current-agent-display');
         const historySection = document.getElementById('history-section');
         const musicButton = document.getElementById('music-button');
         const backgroundMusic = document.getElementById('background-music');
-
         const agentNameElement = document.getElementById('agent-name');
         const agentImageElement = document.getElementById('agent-image');
         const agentMonthElement = document.getElementById('agent-month');
         const historyButtonsContainer = document.getElementById('history-buttons');
-        
         let musicPlaying = false; 
 
-        
-        // Función para cambiar de agente (transición rápida) y actualizar el botón activo
+        // --- 3. CAMBIO DE AGENTE (ESTÁTICO) ---
         function displayAgent(agent) {
-            currentAgentDisplay.style.opacity = '0';
-            
-            // Remueve la clase 'active' de todos los botones
+            // Cambio instantáneo de datos
             document.querySelectorAll('.month-button').forEach(btn => btn.classList.remove('active'));
-
-            setTimeout(() => {
-                agentNameElement.textContent = agent.name;
-                agentImageElement.src = agent.image; 
-                agentImageElement.alt = `Agente del Mes: ${agent.name}`;
-                agentMonthElement.textContent = agent.month;
-                currentAgentDisplay.style.opacity = '1'; 
-                
-                // Añade la clase 'active' al botón del agente recién cargado
-                const activeBtn = Array.from(document.querySelectorAll('.month-button')).find(btn => btn.textContent === agent.month);
-                if (activeBtn) {
-                    activeBtn.classList.add('active');
-                }
-
-            }, 500); 
+            agentNameElement.textContent = agent.name;
+            agentImageElement.src = agent.image; 
+            agentImageElement.alt = `Agente: ${agent.name}`;
+            agentMonthElement.textContent = agent.month;
+            const activeBtn = Array.from(document.querySelectorAll('.month-button')).find(btn => btn.textContent === agent.month);
+            if (activeBtn) activeBtn.classList.add('active');
         }
 
-        // Función principal para la secuencia de aparición
+        // --- 4. SECUENCIA DE ENTRADA (CONTROLADA POR TIEMPO) ---
         function startFadeSequence() {
-            const initialDelay = 1000; 
-            const transitionDuration = 3000; 
-            const gap = 500; 
+            // Tiempo 0: Aparece el Título
+            setTimeout(() => { 
+                mainTitle.classList.add('show'); 
+            }, 500); // Pequeño delay inicial para que no sea brusco
 
-            // Título
-            setTimeout(() => { mainTitle.classList.add('show'); }, initialDelay);
-
-            // Agente del Mes
+            // 2 SEGUNDOS DESPUÉS de que empieza el título (500 + 2000 = 2500)
             setTimeout(() => { 
                 currentAgentDisplay.classList.add('show'); 
-            }, initialDelay + transitionDuration + gap); 
+            }, 2500); 
 
-            // Sección de Historial
+            // El resto aparece un poco después
             setTimeout(() => { 
                 historySection.classList.add('show'); 
-            }, initialDelay + (transitionDuration * 2) + (gap * 2)); 
-            
-            // Botón de música
-             setTimeout(() => { 
                 musicButton.classList.add('show'); 
-            }, initialDelay + (transitionDuration * 2) + (gap * 2) + 1500);
+            }, 4500);
         }
 
-        // Evento para el botón de música
+        // --- 5. LÓGICA GENERAL ---
         musicButton.addEventListener('click', () => {
             if (!musicPlaying) {
                 backgroundMusic.play().then(() => {
-                    musicPlaying = true;
-                    musicButton.textContent = '🔇'; 
-                    musicButton.title = 'Silenciar Música';
-                }).catch(error => {
-                    console.error("Error al intentar reproducir la música:", error);
-                });
+                    musicPlaying = true; musicButton.textContent = '🔇'; musicButton.title = 'Silenciar';
+                }).catch(e => console.error(e));
             } else {
-                backgroundMusic.pause();
-                musicPlaying = false;
-                musicButton.textContent = '🎵'; 
-                musicButton.title = 'Iniciar Música';
+                backgroundMusic.pause(); musicPlaying = false; musicButton.textContent = '🎵'; musicButton.title = 'Reproducir';
             }
         });
 
-
-        // Generar los botones de todos los meses (incluyendo Septiembre)
         function generateHistoryButtons() {
-            // 1. Cargar el agente actual al inicio
             const currentAgent = agentsData.find(a => a.month === currentAgentMonth);
             agentNameElement.textContent = currentAgent.name;
             agentImageElement.src = currentAgent.image; 
             agentMonthElement.textContent = currentAgent.month;
             
-            // 2. Ordenar TODOS los agentes cronológicamente (Enero a Septiembre)
-            let allAgentsOrdered = agentsData.sort((a, b) => a.order - b.order);
+            let allAgentsOrdered = [...agentsData].sort((a, b) => a.order - b.order);
 
-            // 3. Crear los botones
             allAgentsOrdered.forEach(agent => {
                 const button = document.createElement('button');
                 button.className = 'month-button';
                 button.textContent = agent.month;
-                
-                // Si es el mes actual, lo marcamos como activo al inicio
-                if (agent.month === currentAgentMonth) {
-                    button.classList.add('active');
-                }
-
-                button.addEventListener('click', () => {
-                    displayAgent(agent);
-                });
-                
+                if (agent.month === currentAgentMonth) button.classList.add('active');
+                button.addEventListener('click', () => displayAgent(agent));
                 historyButtonsContainer.appendChild(button);
             });
         }
         
-        // Iniciar la configuración y la secuencia
         generateHistoryButtons();
         window.addEventListener('load', startFadeSequence);
     </script>
