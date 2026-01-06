@@ -21,7 +21,7 @@
     --text-main: #e6f1ff;
     --text-muted: #8892b0;
     --accent-gold: #ffe863;
-    --accent-gold-dark: #f1cb1f; /* Dorado más oscuro para gradiente */
+    --accent-gold-dark: #f1cb1f;
     --accent-gold-glow: rgba(255, 215, 0, 0.3);
     --accent-green: #64ffda;
     --accent-red: #ff5f56;
@@ -67,7 +67,6 @@ body {
 .cyber-header h1 {
     font-family: var(--font-display);
     font-size: clamp(1.8rem, 4vw, 3rem);
-    /* CAMBIO: Gradiente Dorado Completo */
     background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -75,7 +74,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 4px;
     margin-bottom: 10px;
-    /* Sombra dorada para efecto neon */
     filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
 }
 
@@ -214,7 +212,6 @@ body {
 }
 .loader-text { font-family: var(--font-display); letter-spacing: 3px; animation: pulse 1.5s infinite; }
 
-/* --- FOOTER RESTAURADO Y ESTILIZADO --- */
 .footer-author {
     display: flex;
     justify-content: center;
@@ -301,7 +298,7 @@ body {
     </div>
 
     <div id="kpi-container" class="row mb-4 g-4">
-        </div>
+    </div>
 
     <div class="glass-card chart-container">
         <div class="chart-header">
@@ -392,10 +389,21 @@ function updateUI() {
 // Lógica de Datos
 function getSeries() {
     if (periodoActual === "MENSUAL") {
-        const T = new Date(), Y = T.getFullYear(), M = T.getMonth() + 1;
-        const months = Array.from({ length: M }, (_, i) => `${Y}-${pad2(i + 1)}`);
+        // CORRECCIÓN PARA 2026: Calcular últimos 13 meses
+        const months = [];
+        const hoy = new Date();
+        
+        // Iteramos 12 meses hacia atrás desde hoy
+        for (let i = 12; i >= 0; i--) {
+            const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
+            const y = d.getFullYear();
+            const m = pad2(d.getMonth() + 1);
+            months.push(`${y}-${m}`);
+        }
+
         const recs = DATA.filter(i => (agenteActual==="TODOS"||i.agente===agenteActual) && i.accion===accionActual && i.fecha_mensual);
         const agg = aggregateSum(recs, i => i.fecha_mensual);
+        
         return months.map(m => ({ x: `${m}-01`, y: agg.find(a => a.x === m)?.y || 0 }));
     } else {
         const daysBack = parseInt(periodoActual);
@@ -412,11 +420,17 @@ function renderChart() {
     const x = rawData.map(s => s.x);
     const y = rawData.map(s => s.y);
     
-    // Texto personalizado para eje X
+    // Texto personalizado para eje X con AÑO
     const tickText = rawData.map(s => {
         if(!s.x) return "";
         const p = s.x.split('-');
-        return periodoActual === "MENSUAL" ? MESES[parseInt(p[1])-1] : p[2];
+        if (periodoActual === "MENSUAL") {
+            const nombreMes = MESES[parseInt(p[1])-1];
+            const anioCorto = p[0].substring(2); 
+            return `${nombreMes} '${anioCorto}`; // Ejemplo: ENE '26
+        } else {
+            return p[2];
+        }
     });
 
     const hoverTemplate = '<span style="font-family:Rajdhani; font-size:14px; color: #8892b0">FECHA: %{text}</span><br>' +
@@ -451,7 +465,6 @@ function renderChart() {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         height: 450,
-        // Configuración para que el tooltip (hover) sea oscuro y legible
         hoverlabel: {
             bgcolor: "#050b14", 
             bordercolor: "#FFD700", 
