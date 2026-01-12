@@ -85,6 +85,29 @@
 
 <body class="bg-slate-950 text-slate-200 antialiased overflow-hidden">
 
+    <div id="login-overlay" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="bg-slate-900 p-8 rounded-2xl shadow-2xl border border-slate-800 w-full max-w-md relative">
+            <div class="absolute top-0 left-0 w-full h-1 bg-warner-gold rounded-t-2xl"></div>
+            <div class="text-center mb-8">
+                <i class="ph-fill ph-film-strip text-warner-gold text-5xl mb-4"></i>
+                <h2 class="text-2xl font-bold text-white tracking-wide">WARNER <span class="text-warner-gold">PANEL</span></h2>
+                <p class="text-slate-400 text-sm mt-2">Acceso exclusivo personal autorizado</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-xs uppercase text-slate-500 font-bold mb-2">Correo (Usuario)</label>
+                    <input type="email" id="login-email" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-3 px-4 text-white focus:border-warner-gold focus:outline-none" placeholder="nombre@ejemplo.com" required>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-500 font-bold mb-2">DNI (Contraseña)</label>
+                    <input type="password" id="login-dni" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-3 px-4 text-white focus:border-warner-gold focus:outline-none" placeholder="Sin puntos" required>
+                </div>
+                <div id="login-error" class="hidden text-red-400 text-xs text-center bg-red-900/20 py-2 rounded">Error de credenciales</div>
+                <button type="submit" id="btn-login" class="w-full bg-warner-gold hover:bg-warner-goldHover text-slate-950 font-bold py-3 rounded-lg shadow-lg transition-all">INGRESAR</button>
+            </form>
+        </div>
+    </div>
+
     <div id="app-layout" class="layout-grid">
         
         <aside class="flex flex-col relative z-20 shadow-2xl">
@@ -97,59 +120,80 @@
 
             <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
                 
-                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Herramientas</p>
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Gestión</p>
 
-                <button onclick="navigate('forms-section')" class="nav-item active bg-slate-800 text-white w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('iframe-viewer', 'crm.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
+                    <i class="ph ph-kanban text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
+                    CRM / Pipeline
+                </button>
+
+                <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2">Herramientas</p>
+
+                <button onclick="navigate('forms-section')" class="nav-item bg-slate-800 text-white w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white group border-l-2 border-warner-gold">
                     <i class="ph ph-clipboard-text text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Registros / Formularios
                 </button>
 
-                <button onclick="navigate('procedimientos-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('procedimientos-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-book-open text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Procedimientos
                 </button>
 
-                <button onclick="navigate('database-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('database-section')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-database text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Bases de Datos
                 </button>
                 
-                <button onclick="navigate('rendimiento-section', 'rendimiento.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('rendimiento-section', 'rendimiento.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-chart-line-up text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Rendimiento
                 </button>
 
-                <button onclick="navigate('map-section', 'https://mapawarnerdash.onrender.com/')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('map-section', 'https://mapawarnerdash.onrender.com/')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-map-trifold text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Mapa Inmuebles
                 </button>
 
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">Comunidad</p>
 
-                <button onclick="navigate('agente-del-mes-section', 'AGENTEDELMES.HTML')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('agente-del-mes-section', 'AGENTEDELMES.HTML')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-trophy text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Agente del Mes
                 </button>
 
-                <button onclick="navigate('competencias-warner-section', 'https://plgordillovera.github.io/warnerjuegos/index.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group">
+                <button onclick="navigate('competencias-warner-section', 'https://plgordillovera.github.io/warnerjuegos/index.html')" class="nav-item w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white group border-l-2 border-transparent">
                     <i class="ph ph-game-controller text-lg mr-3 group-hover:text-warner-gold transition-colors"></i>
                     Competencias
                 </button>
             </nav>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-warner-gold flex items-center justify-center text-warner-dark font-bold text-xs" id="user-initials">U</div>
+                    <div class="ml-3 overflow-hidden flex-1">
+                        <p class="text-sm font-medium text-white truncate" id="user-name">Usuario</p>
+                        <p class="text-xs text-slate-500 truncate" id="user-role">Invitado</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-500 hover:text-red-400" title="Cerrar Sesión"><i class="ph-bold ph-sign-out"></i></button>
+                </div>
+            </div>
         </aside>
 
         <main class="relative flex flex-col h-full overflow-hidden bg-slate-950">
             
             <header class="h-16 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md z-10">
-                <button id="sidebar-toggle" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none">
-                    <i class="ph ph-list text-2xl"></i>
-                </button>
+                <div class="flex items-center gap-4">
+                    <button id="sidebar-toggle" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors focus:outline-none">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <h2 class="text-sm text-slate-400 font-medium" id="page-title">Panel Principal</h2>
+                </div>
                 <div class="text-sm text-slate-500">
                     <span id="current-date"></span>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-6 scroll-smooth relative">
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth relative custom-scroll">
 
                 <section id="forms-section" class="content-section animate-fade-in">
                     <div class="mb-6">
@@ -237,7 +281,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        
                         <a href="https://docs.google.com/spreadsheets/d/1Y80pLiAlu7RBZApq6KyOYIHBgCMYPKB76NpjpbhC-7w/edit?resourcekey=&gid=2110786399" target="_blank" class="glass-panel p-4 rounded-lg hover:border-warner-gold flex items-center group">
                             <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center mr-3 border border-slate-700 group-hover:border-warner-gold">
                                 <i class="ph-bold ph-house text-warner-gold"></i>
@@ -320,6 +363,11 @@
     </div>
 
     <script>
+        // ==========================================
+        // URL DEL DEPLOY (PEGA TU URL AQUI ABAJO)
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwiLEu9LNja_nScMVhy5FCQViwSfDew-T8GqlmgRxiPwoqoJnafttej4eo3zbqdtGHxCQ/exec'; 
+
         const iframeViewer = document.getElementById('iframe-viewer');
         const mainIframe = document.getElementById('main-iframe');
         const iframeLoader = document.getElementById('iframe-loader');
@@ -327,35 +375,101 @@
         const layout = document.getElementById('app-layout');
         const toggleBtn = document.getElementById('sidebar-toggle');
 
+        // INICIO Y VERIFICACIÓN DE SESIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            
+            // Auto Login si ya entró antes
+            const user = JSON.parse(localStorage.getItem('warnerUser'));
+            if(user) initSession(user);
+        });
+
+        // FUNCIÓN LOGIN
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const errorDiv = document.getElementById('login-error');
+            
+            btn.innerHTML = 'Verificando...';
+            btn.disabled = true;
+            errorDiv.classList.add('hidden');
+
+            const email = document.getElementById('login-email').value;
+            const dni = document.getElementById('login-dni').value;
+
+            try {
+                const res = await fetch(`${API_URL}?action=login&user=${encodeURIComponent(email)}&pass=${encodeURIComponent(dni)}`);
+                const data = await res.json();
+
+                if (data.auth) {
+                    const user = { name: data.name, role: data.role, cargo: data.cargo };
+                    localStorage.setItem('warnerUser', JSON.stringify(user));
+                    initSession(user);
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (err) {
+                errorDiv.textContent = err.message || 'Error de conexión';
+                errorDiv.classList.remove('hidden');
+                btn.innerHTML = 'INGRESAR';
+                btn.disabled = false;
+            }
+        }
+
+        function initSession(user) {
+            document.getElementById('login-overlay').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('user-role').textContent = user.cargo;
+            document.getElementById('user-initials').textContent = user.name.charAt(0).toUpperCase();
+        }
+
+        function logout() {
+            localStorage.removeItem('warnerUser');
+            location.reload();
+        }
+
+        // NAVEGACIÓN
         function navigate(sectionId, iframeSrc = null) {
             // Ocultar todas las secciones
             document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
             
-            // Actualizar Sidebar
+            // Actualizar Sidebar (Estilos)
             navItems.forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white');
-                btn.classList.add('text-slate-300');
+                btn.classList.remove('bg-slate-800', 'text-white', 'border-warner-gold');
+                btn.classList.add('text-slate-300', 'border-transparent');
+                
                 if(btn.getAttribute('onclick').includes(sectionId)) {
-                    btn.classList.add('bg-slate-800', 'text-white');
-                    btn.classList.remove('text-slate-300');
+                    btn.classList.add('bg-slate-800', 'text-white', 'border-warner-gold');
+                    btn.classList.remove('text-slate-300', 'border-transparent');
                 }
             });
 
+            // Mostrar Sección
             if (iframeSrc) {
                 iframeViewer.classList.remove('hidden');
                 iframeViewer.classList.add('flex');
                 
-                iframeLoader.classList.remove('hidden');
-                mainIframe.classList.add('opacity-0');
-
-                if(mainIframe.src !== iframeSrc) {
+                // Cargar iframe solo si cambió
+                if(mainIframe.src.indexOf(iframeSrc) === -1) {
+                    iframeLoader.classList.remove('hidden');
+                    mainIframe.classList.add('opacity-0');
                     mainIframe.src = iframeSrc;
-                } else {
-                    hideLoader();
                 }
+                
+                document.getElementById('page-title').textContent = 'CRM / Pipeline';
             } else {
                 const target = document.getElementById(sectionId);
-                if(target) target.classList.remove('hidden');
+                if(target) {
+                    target.classList.remove('hidden');
+                    // Título dinámico
+                    let title = "Panel Principal";
+                    if(sectionId.includes('forms')) title = "Formularios";
+                    if(sectionId.includes('database')) title = "Bases de Datos";
+                    if(sectionId.includes('procedimientos')) title = "Procedimientos";
+                    document.getElementById('page-title').textContent = title;
+                }
             }
         }
 
@@ -369,9 +483,6 @@
         toggleBtn.addEventListener('click', () => {
             layout.classList.toggle('collapsed');
         });
-
-        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', dateOptions);
     </script>
 </body>
 </html>
