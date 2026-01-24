@@ -7,7 +7,7 @@
 <base target="_top" />
 
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
@@ -538,7 +538,21 @@ TIME_BUTTONS.forEach(btn => btn.addEventListener('click', (e) => {
     periodoActual = e.target.dataset.period;
     renderChart();
 }));
-window.addEventListener('resize', () => Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true }));
+// --- OPTIMIZACIÓN DE RENDIMIENTO (DEBOUNCE) ---
+// Evita que el gráfico sature la CPU al cambiar el tamaño de la ventana
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => { clearTimeout(timeout); func(...args); };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Ahora el gráfico solo se ajustará 200ms DESPUÉS de que el usuario deje de mover la ventana
+window.addEventListener('resize', debounce(() => {
+    Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
+}, 200));
 
 </script>
 </body>

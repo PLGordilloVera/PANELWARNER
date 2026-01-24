@@ -444,6 +444,37 @@
         let db=[], viewMode='KANBAN', currentCat='COMPRADOR', user=null, selectedId=null;
         let createIntention = 'DEMANDA'; // Variable para controlar el modal
 
+        // --- HERRAMIENTAS DE SEGURIDAD Y UX ---
+        // 1. Sanitizador para evitar Inyección de Código (XSS)
+        const sanitize = (str) => {
+            if (!str) return "";
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        };
+
+        // 2. Sistema de Notificaciones Moderno (Toasts)
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-red-600' : 'bg-blue-600');
+            const icon = type === 'success' ? 'ph-check-circle' : (type === 'error' ? 'ph-warning' : 'ph-info');
+            
+            toast.className = `${bgClass} text-white px-6 py-4 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto border border-white/20`;
+            toast.innerHTML = `<i class="ph-bold ${icon} text-xl"></i> <span>${sanitize(message)}</span>`;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            // Animación de entrada
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            
+            // Auto-destrucción
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
             const stored = localStorage.getItem('warnerUser');
@@ -473,7 +504,7 @@
                 const data = await res.json();
                 
                 if (data.length > 0 && data[0].id === 'ERR') {
-                    alert("⚠️ Error del sistema: " + data[0].nom);
+                    showToast("⚠️ Error del sistema: " + data[0].nom);
                     db = [];
                 } else {
                     const esSuper = user.role === 'ADMIN' || user.cargo.toLowerCase().includes('lider') || user.cargo.toLowerCase().includes('director');
@@ -494,7 +525,7 @@
                 render();
             } catch(e) {
                 console.error(e);
-                alert("Error de conexión. Intente recargar.");
+                showToast("Error de conexión. Intente recargar.");
             } finally {
                 loader.classList.add('opacity-0');
                 setTimeout(()=>loader.classList.add('hidden'), 300);
@@ -717,7 +748,7 @@
                 await fetch(`${API_URL}?action=updateClient&data=${encodeURIComponent(JSON.stringify(payload))}`);
             } catch(e) {
                 console.error(e);
-                alert("Error guardando cambios.");
+                showToast("Error guardando cambios.");
             } finally {
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
@@ -762,7 +793,7 @@
             const btn = document.getElementById('btn-create');
             const name = document.getElementById('new-name').value;
             
-            if(!name) { alert("El nombre es obligatorio"); return; }
+            if(!name) { showToast("El nombre es obligatorio"); return; }
             
             const payload = {
                 intencion: createIntention, // 'DEMANDA' o 'OFERTA'
@@ -790,13 +821,13 @@
                 const res = await fetch(`${API_URL}?action=createClient&data=${encodeURIComponent(JSON.stringify(payload))}`);
                 const data = await res.json();
                 
-                if(data.success) {
-                    closeCreateModal();
-                    alert("¡Cliente creado!");
-                    loadData();
-                } else {
-                    alert("Error: " + data.error);
-                }
+            if(data.success) {
+                closeCreateModal();
+                showToast("¡Cliente creado exitosamente!", "success");
+                loadData();
+            } else {
+                showToast("Error: " + data.error, "error");
+            }
             } catch(e) {
                 console.error(e);
                 alert("Error de conexión al crear cliente.");
@@ -877,5 +908,6 @@
             card.style.opacity = "1";
         }
     </script>
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 </body>
 </html>

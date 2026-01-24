@@ -400,7 +400,12 @@
             const dni = document.getElementById('login-dni').value;
 
             try {
-                const res = await fetch(`${API_URL}?action=login&user=${encodeURIComponent(email)}&pass=${encodeURIComponent(dni)}`);
+                // Petición POST Segura: Las credenciales viajan ocultas y encriptadas por HTTPS
+            const res = await fetch(API_URL + '?action=login', {
+                method: 'POST',
+                body: JSON.stringify({ user: email, pass: dni }),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            });
                 const data = await res.json();
 
                 if (data.auth) {
