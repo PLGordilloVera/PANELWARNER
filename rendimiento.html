@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dashboard Rendimiento Agentes WARNER - ELITE VIEW</title>
+<title>Dashboard Rendimiento Agentes WARNER</title>
 <base target="_top" />
 
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <style>
 /* ---------------------------------------------------- */
@@ -25,6 +26,7 @@
     --accent-gold-glow: rgba(255, 215, 0, 0.3);
     --accent-green: #64ffda;
     --accent-red: #ff5f56;
+    --accent-blue: #3498db;
     --border-glass: rgba(255, 255, 255, 0.1);
     --font-tech: 'Rajdhani', sans-serif;
     --font-display: 'Orbitron', sans-serif;
@@ -51,11 +53,14 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 40px 20px;
+    padding-bottom: 120px;
     animation: fadeIn 1s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 /* ---------------------------------------------------- */
-/* === COMPONENTS UI === */
+/* === COMPONENTS DASHBOARD === */
 /* ---------------------------------------------------- */
 
 .cyber-header {
@@ -137,6 +142,7 @@ body {
     box-shadow: 0 0 15px var(--accent-gold-glow) !important;
 }
 
+/* KPI CARDS */
 .kpi-wrapper {
     display: flex;
     flex-direction: column;
@@ -146,109 +152,161 @@ body {
     position: relative;
     overflow: hidden;
 }
-
 .kpi-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 4px; height: 100%;
-    background: var(--accent-gold);
-    opacity: 0.5;
-    transition: 0.3s;
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--accent-gold); opacity: 0.5; transition: 0.3s;
 }
-
 .kpi-wrapper:hover::after { opacity: 1; box-shadow: 0 0 10px var(--accent-gold); }
-
 .kpi-icon { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 10px; }
 .kpi-title { font-family: var(--font-tech); color: var(--text-muted); font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; }
 .kpi-value { font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; color: #fff; margin-top: 5px; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
 
-.chart-container {
-    padding: 20px;
-    min-height: 500px;
-    position: relative;
-}
-
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    padding: 0 10px;
-    border-bottom: 1px solid var(--border-glass);
-    padding-bottom: 15px;
-}
-
-.chart-title {
-    font-family: var(--font-tech);
-    font-size: 1.5rem;
-    color: var(--text-main);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
+/* CHART CONTAINER */
+.chart-container { padding: 20px; min-height: 500px; position: relative; }
+.chart-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px; padding: 0 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; }
+.chart-title { font-family: var(--font-tech); font-size: 1.5rem; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
 .toolbar { display: flex; gap: 8px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 8px; }
-
-.time-btn {
-    background: transparent; border: none; color: var(--text-muted);
-    font-family: var(--font-tech); font-weight: 700; padding: 6px 16px;
-    border-radius: 6px; transition: all 0.3s; font-size: 0.9rem;
-}
+.time-btn { background: transparent; border: none; color: var(--text-muted); font-family: var(--font-tech); font-weight: 700; padding: 6px 16px; border-radius: 6px; transition: all 0.3s; font-size: 0.9rem; }
 .time-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
 .time-btn.active { background: var(--accent-gold); color: #000; box-shadow: 0 0 15px var(--accent-gold-glow); }
 
+/* LOADER */
 #loader-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--bg-deep); z-index: 9999;
     display: flex; justify-content: center; align-items: center;
     flex-direction: column; transition: opacity 0.5s;
 }
+.loader-spinner { width: 60px; height: 60px; border: 3px solid transparent; border-top-color: var(--accent-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+.loader-text { font-family: var(--font-display); letter-spacing: 3px; animation: pulse 1.5s infinite; color: var(--accent-gold); }
 
-.loader-spinner {
-    width: 60px; height: 60px; border: 3px solid transparent;
-    border-top-color: var(--accent-gold); border-radius: 50%;
-    animation: spin 1s linear infinite; margin-bottom: 20px;
-}
-.loader-text { font-family: var(--font-display); letter-spacing: 3px; animation: pulse 1.5s infinite; }
+/* FOOTER */
+.footer-author { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 4rem; font-family: var(--font-tech); color: var(--text-muted); font-weight: 700; letter-spacing: 2px; padding-bottom: 20px; }
+.github-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-gold); transition: transform 0.3s, box-shadow 0.3s; vertical-align: middle; }
+.github-avatar:hover { transform: scale(1.15); box-shadow: 0 0 15px var(--accent-gold); cursor: pointer; }
 
-.footer-author {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4rem;
-    font-family: var(--font-tech);
-    color: var(--text-muted);
-    font-weight: 700;
-    letter-spacing: 2px;
-    padding-bottom: 20px;
-}
+/* ---------------------------------------------------- */
+/* === ESTILOS DEL CHATBOT IA === */
+/* ---------------------------------------------------- */
 
-.github-avatar {
-    width: 35px;
-    height: 35px;
+#chat-btn {
+    position: fixed; bottom: 30px; right: 30px;
+    width: 60px; height: 60px;
+    /* Estilo Elite: Degradado Naranja/Dorado */
+    background: linear-gradient(135deg, var(--accent-gold), #e67e22);
     border-radius: 50%;
-    border: 2px solid var(--accent-gold);
-    transition: transform 0.3s, box-shadow 0.3s;
-    vertical-align: middle;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    cursor: pointer; 
+    z-index: 2147483647; /* Máximo z-index para asegurar visibilidad */
+    transition: transform 0.3s;
+    border: 2px solid #fff;
+}
+#chat-btn:hover { transform: scale(1.1) rotate(10deg); }
+#chat-btn i { font-size: 24px; color: #000; }
+
+#chat-window {
+    position: fixed; bottom: 100px; right: 30px;
+    /* --- CAMBIO: ANCHO AUMENTADO A 480PX --- */
+    width: 480px; 
+    height: 550px; /* También aumentamos un poco el alto */
+    background: var(--bg-deep); 
+    border: 1px solid var(--accent-gold);
+    border-radius: 12px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    z-index: 2147483647;
+    transform: translateY(20px); opacity: 0; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    overflow: hidden;
+}
+#chat-window.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+
+.chat-header {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 15px; border-bottom: 1px solid var(--border-glass);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.chat-title { font-family: var(--font-display); font-size: 14px; color: var(--accent-gold); letter-spacing: 1px; }
+
+.chat-messages {
+    flex-grow: 1; padding: 15px; overflow-y: auto;
+    font-size: 14px; /* Letra un poquito más grande para el ancho nuevo */
+    display: flex; flex-direction: column; gap: 10px;
 }
 
-.github-avatar:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 15px var(--accent-gold);
-    cursor: pointer;
+/* Burbujas de Mensaje */
+.msg { padding: 12px 16px; border-radius: 8px; max-width: 85%; line-height: 1.5; word-wrap: break-word; }
+.msg.user { 
+    align-self: flex-end; 
+    background: rgba(52, 152, 219, 0.2); 
+    border: 1px solid var(--accent-blue); 
+    color: #fff; 
 }
+.msg.ai { 
+    align-self: flex-start; 
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--border-glass); 
+    color: #ccc; 
+}
+.msg.ai strong { color: var(--accent-gold); }
+.msg.ai p { margin: 0; margin-bottom: 8px; }
+.msg.ai p:last-child { margin-bottom: 0; }
+.msg.ai ul { padding-left: 20px; margin: 0; }
+
+.chat-input-area {
+    padding: 15px; border-top: 1px solid var(--border-glass);
+    display: flex; gap: 10px; 
+    background: rgba(0,0,0,0.3);
+}
+#chatInput {
+    flex-grow: 1; background: transparent; border: 1px solid var(--text-muted);
+    border-radius: 4px; color: #fff; padding: 8px; font-family: 'Inter'; font-size: 13px;
+}
+#chatInput:focus { border-color: var(--accent-gold); outline: none; }
+#sendBtn {
+    background: var(--accent-gold); border: none; border-radius: 4px;
+    width: 35px; cursor: pointer; color: #000; display: flex; justify-content: center; align-items: center;
+}
+
+.typing-indicator { font-size: 10px; color: var(--accent-gold); font-style: italic; margin-left: 10px; display: none; margin-bottom: 5px;}
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
+/* ========================================= */
+/* === RESPONSIVE FIXES (MÓVIL) === */
+/* ========================================= */
 @media (max-width: 768px) {
     .kpi-value { font-size: 2.2rem; }
     .chart-header { flex-direction: column; align-items: flex-start; gap: 15px; }
     .toolbar { width: 100%; justify-content: space-between; }
     .time-btn { padding: 6px 10px; font-size: 0.8rem; }
+    
+    #chat-btn {
+        position: fixed !important;
+        bottom: 15vh !important;
+        right: 20px !important;
+        width: 55px !important;
+        height: 55px !important;
+        z-index: 2147483647 !important;
+        display: flex !important;
+        box-shadow: 0 0 15px #ffe863 !important;
+    }
+    #chat-btn i { font-size: 22px !important; }
+
+    #chat-window {
+        position: fixed !important;
+        /* En móvil forzamos que sea el 90% para que no se salga de pantalla */
+        width: 90% !important; 
+        right: 5% !important;
+        bottom: calc(15vh + 70px) !important;
+        height: 50vh !important;
+        z-index: 2147483647 !important;
+        background: var(--bg-deep) !important; 
+        backdrop-filter: none !important;
+    }
 }
 </style>
 </head>
@@ -257,7 +315,7 @@ body {
 
 <div id="loader-overlay">
     <div class="loader-spinner"></div>
-    <div class="loader-text">ESTABLECIENDO CONEXIÓN...</div>
+    <div class="loader-text">SINCRONIZANDO WARNER...</div>
 </div>
 
 <div class="main-content-wrapper">
@@ -265,7 +323,7 @@ body {
     <header class="cyber-header">
         <h1>WARNER RENDIMIENTO</h1>
         <div id="status-pill-container">
-            <span class="status-pill"><i class="fas fa-circle fa-xs me-2"></i>CARGADO EN TIEMPO REAL</span>
+            <span class="status-pill"><i class="fas fa-circle fa-xs me-2"></i>SISTEMA ACTIVO</span>
         </div>
     </header>
 
@@ -297,8 +355,7 @@ body {
         </div>
     </div>
 
-    <div id="kpi-container" class="row mb-4 g-4">
-    </div>
+    <div id="kpi-container" class="row mb-4 g-4"></div>
 
     <div class="glass-card chart-container">
         <div class="chart-header">
@@ -323,12 +380,30 @@ body {
         </a>
     </footer>
 
+</div> 
+<div id="chat-btn" onclick="toggleChat()">
+    <i class="fas fa-robot"></i>
+</div>
+
+<div id="chat-window">
+    <div class="chat-header">
+        <span class="chat-title"><i class="fas fa-brain me-2"></i>WARNER AI ANALYST</span>
+        <i class="fas fa-times" style="cursor:pointer; color:#8892b0;" onclick="toggleChat()"></i>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+        <div class="msg ai">
+            Hola. Soy la IA de Warner. Tengo acceso a las métricas de todos los agentes. <strong>¿Qué quieres analizar hoy?</strong>
+        </div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">Analizando datos...</div>
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Ej: ¿Quién tuvo más reservas en Marzo?" onkeypress="checkEnter(event)">
+        <button id="sendBtn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyFMsw7uxn-kvxn4wHOVLKjSijRhRk5YtzNpcspEdNjWFjoq71Jf2VZ193Sz_pjL-mK/exec";
-
-// Referencias DOM
+// Referencias DOM Dashboard
 const LOADER = document.getElementById("loader-overlay");
 const AGENTE_SELECT = document.getElementById("agente-select");
 const ACCION_SELECT = document.getElementById("accion-select");
@@ -351,33 +426,40 @@ function aggregateSum(items, keyExtractor) {
     return Array.from(map.entries()).map(([x, y]) => ({ x, y }));
 }
 
-// Inicialización
-async function init() {
+// --- CARGA DE DATOS ---
+window.onload = function() {
+    google.script.run
+        .withSuccessHandler(initDashboard)
+        .withFailureHandler(onLoadError)
+        .obtenerDatosDashboard(); 
+};
+
+function initDashboard(jsonString) {
     try {
-        const r = await fetch(API_URL);
-        if (!r.ok) throw new Error("Error de Red");
-        const j = await r.json();
+        const j = JSON.parse(jsonString);
         
         DATA = j.evolucion_data || [];
         INDICES = j.indices_anuales || {};
         AGENTES = j.agentes_activos || [];
         
-        // Ordenar y limpiar agentes
         AGENTES = AGENTES.filter(a => a !== "TODOS").sort();
         AGENTES.unshift("TODOS");
         
         AGENTE_SELECT.innerHTML = AGENTES.map(a => `<option value="${a}">${a}</option>`).join("");
         
-        // Ocultar Loader
         LOADER.style.opacity = "0";
         setTimeout(() => LOADER.remove(), 500);
 
         updateUI();
     } catch (e) {
-        console.error(e);
-        document.querySelector(".loader-text").innerText = "ERROR DE CONEXIÓN. RECARGUE.";
-        document.querySelector(".loader-text").style.color = "#ff5f56";
+        onLoadError(e);
     }
+}
+
+function onLoadError(e) {
+    console.error(e);
+    document.querySelector(".loader-text").innerText = "ERROR CRÍTICO: " + e.message;
+    document.querySelector(".loader-text").style.color = "#ff5f56";
 }
 
 function updateUI() {
@@ -386,14 +468,10 @@ function updateUI() {
     CHART_TITLE.innerText = `${accionActual}`;
 }
 
-// Lógica de Datos
 function getSeries() {
     if (periodoActual === "MENSUAL") {
-        // CORRECCIÓN PARA 2026: Calcular últimos 13 meses
         const months = [];
         const hoy = new Date();
-        
-        // Iteramos 12 meses hacia atrás desde hoy
         for (let i = 12; i >= 0; i--) {
             const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1);
             const y = d.getFullYear();
@@ -420,14 +498,13 @@ function renderChart() {
     const x = rawData.map(s => s.x);
     const y = rawData.map(s => s.y);
     
-    // Texto personalizado para eje X con AÑO
     const tickText = rawData.map(s => {
         if(!s.x) return "";
         const p = s.x.split('-');
         if (periodoActual === "MENSUAL") {
             const nombreMes = MESES[parseInt(p[1])-1];
             const anioCorto = p[0].substring(2); 
-            return `${nombreMes} '${anioCorto}`; // Ejemplo: ENE '26
+            return `${nombreMes} '${anioCorto}`;
         } else {
             return p[2];
         }
@@ -436,27 +513,19 @@ function renderChart() {
     const hoverTemplate = '<span style="font-family:Rajdhani; font-size:14px; color: #8892b0">FECHA: %{text}</span><br>' +
                           '<span style="font-family:Orbitron; font-size:20px; font-weight:bold; color: #FFD700">CANT: %{y}</span><extra></extra>';
 
-    // --- GRÁFICO BARRAS + LÍNEAS ---
     const data = [
         {
             x: x, y: y, text: tickText,
             type: "bar",
             hovertemplate: hoverTemplate,
-            marker: { 
-                color: "rgba(255, 215, 0, 0.6)", 
-                line: { color: "#FFD700", width: 1 } 
-            }
+            marker: { color: "rgba(255, 215, 0, 0.6)", line: { color: "#FFD700", width: 1 } }
         },
         {
             x: x, y: y, text: tickText,
             type: "scatter", mode: "lines+markers",
             hovertemplate: hoverTemplate,
             line: { color: "#e6f1ff", width: 2 }, 
-            marker: { 
-                color: "#0A192F", 
-                size: 8, 
-                line: { color: "#FFD700", width: 2 } 
-            }
+            marker: { color: "#0A192F", size: 8, line: { color: "#FFD700", width: 2 } }
         }
     ];
 
@@ -465,22 +534,9 @@ function renderChart() {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         height: 450,
-        hoverlabel: {
-            bgcolor: "#050b14", 
-            bordercolor: "#FFD700", 
-            font: { family: "Rajdhani", color: "#e6f1ff" } 
-        },
-        xaxis: { 
-            gridcolor: 'rgba(255,255,255,0.05)', 
-            tickmode: 'array', tickvals: x, ticktext: tickText,
-            fixedrange: true 
-        },
-        yaxis: { 
-            gridcolor: 'rgba(255,255,255,0.05)', 
-            zerolinecolor: 'rgba(255,215,0,0.2)',
-            fixedrange: true,
-            rangemode: 'tozero'
-        },
+        hoverlabel: { bgcolor: "#050b14", bordercolor: "#FFD700", font: { family: "Rajdhani", color: "#e6f1ff" } },
+        xaxis: { gridcolor: 'rgba(255,255,255,0.05)', tickmode: 'array', tickvals: x, ticktext: tickText, fixedrange: true },
+        yaxis: { gridcolor: 'rgba(255,255,255,0.05)', zerolinecolor: 'rgba(255,215,0,0.2)', fixedrange: true, rangemode: 'tozero' },
         margin: { t: 20, b: 40, l: 40, r: 20 },
         showlegend: false,
         dragmode: false
@@ -528,8 +584,6 @@ function renderKPIs() {
     }).join("");
 }
 
-// Event Listeners
-document.addEventListener("DOMContentLoaded", init);
 AGENTE_SELECT.addEventListener("change", (e) => { agenteActual = e.target.value; updateUI(); });
 ACCION_SELECT.addEventListener("change", (e) => { accionActual = e.target.value; updateUI(); });
 TIME_BUTTONS.forEach(btn => btn.addEventListener('click', (e) => {
@@ -538,22 +592,51 @@ TIME_BUTTONS.forEach(btn => btn.addEventListener('click', (e) => {
     periodoActual = e.target.dataset.period;
     renderChart();
 }));
-// --- OPTIMIZACIÓN DE RENDIMIENTO (DEBOUNCE) ---
-// Evita que el gráfico sature la CPU al cambiar el tamaño de la ventana
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => { clearTimeout(timeout); func(...args); };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+window.addEventListener('resize', () => Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true }));
+
+// --- LÓGICA DEL CHATBOT ---
+function toggleChat() {
+    document.getElementById('chat-window').classList.toggle('open');
+}
+function checkEnter(e) { if(e.key === 'Enter') sendMessage(); }
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const txt = input.value.trim();
+    if(!txt) return;
+
+    addMsg(txt, 'user');
+    input.value = '';
+    
+    document.getElementById('typingIndicator').style.display = 'block';
+    const msgsDiv = document.getElementById('chatMessages');
+    msgsDiv.scrollTop = msgsDiv.scrollHeight;
+
+    google.script.run
+        .withSuccessHandler(onAiResponse)
+        .withFailureHandler(onAiError)
+        .consultarIA(txt, DATA); 
 }
 
-// Ahora el gráfico solo se ajustará 200ms DESPUÉS de que el usuario deje de mover la ventana
-window.addEventListener('resize', debounce(() => {
-    Plotly.relayout(PLOTLY_GRAPH_ID, { autosize: true });
-}, 200));
+function onAiResponse(response) {
+    document.getElementById('typingIndicator').style.display = 'none';
+    const htmlText = marked.parse(response);
+    addMsg(htmlText, 'ai');
+}
 
+function onAiError(e) {
+    document.getElementById('typingIndicator').style.display = 'none';
+    addMsg("Error: " + e.message, 'ai');
+}
+
+function addMsg(html, type) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + type;
+    div.innerHTML = html;
+    document.getElementById('chatMessages').appendChild(div);
+    const box = document.getElementById('chatMessages');
+    box.scrollTop = box.scrollHeight;
+}
 </script>
 </body>
 </html>
